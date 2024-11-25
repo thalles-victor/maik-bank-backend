@@ -4,9 +4,27 @@ import { AppService } from './app.service';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { env } from '@utils';
 import { UserModel } from '#models';
+import { ThrottlerModule } from '@nestjs/throttler';
+import { ThrottlerStorageRedisService } from '@nest-lab/throttler-storage-redis';
+import Redis from 'ioredis';
 
 @Module({
   imports: [
+    ThrottlerModule.forRoot({
+      throttlers: [
+        {
+          ttl: 10000,
+          limit: 10,
+        },
+      ],
+      storage: new ThrottlerStorageRedisService(
+        new Redis({
+          host: env.REDIS_HOST,
+          port: env.REDIS_PORT,
+          password: env.REDIS_PASSWORD,
+        }),
+      ),
+    }),
     SequelizeModule.forRoot({
       dialect: 'postgres',
       host: env.POSTGRES_HOST,
