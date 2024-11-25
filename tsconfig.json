@@ -16,6 +16,12 @@
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false
+    "noFallthroughCasesInSwitch": false,
+    "paths": {
+      "@types": ["./src/@types"],
+      "@utils": ["./src/@utils"],
+      "@metadata": ["./src/@metadata"],
+      "#models": ["./src/Application/Models"]
+    }
   }
 }
