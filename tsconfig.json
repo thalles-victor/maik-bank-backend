@@ -18,9 +18,9 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
     "paths": {
-      "@types": ["./src/@types"],
-      "@utils": ["./src/@utils"],
-      "@metadata": ["./src/@metadata"],
+      "@types": ["src/@shared/@types"],
+      "@utils": ["src/@shared/@utils"],
+      "@metadata": ["src/@shared/@metadata"],
       "#models": ["./src/Application/Models"]
     }
   }
