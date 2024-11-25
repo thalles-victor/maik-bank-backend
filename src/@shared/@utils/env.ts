@@ -4,7 +4,7 @@ import { z } from 'zod';
 
 const envSchema = z.object({
   // Jwt
-  JWT_SECRET: z.string().min(300),
+  JWT_SECRET: z.string().min(100),
 
   // Postgres
   POSTGRES_HOST: z.string(),
