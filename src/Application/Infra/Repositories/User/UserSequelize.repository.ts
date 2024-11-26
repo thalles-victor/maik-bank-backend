@@ -1,4 +1,8 @@
-import { UserModel, UserModelUniqRef, UserUpdateModel } from '#models';
+import {
+  UserModel,
+  UserModelUniqRef,
+  UserUpdateModel,
+} from 'src/Application/Entities';
 import { GetWithPaginationResult, PaginationProps } from '@types';
 import { IBaseRepositoryContract } from '../IBaseRepository.contract';
 

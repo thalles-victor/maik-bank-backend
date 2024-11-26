@@ -21,7 +21,7 @@
       "@types": ["src/@shared/@types"],
       "@utils": ["src/@shared/@utils"],
       "@metadata": ["src/@shared/@metadata"],
-      "#models": ["./src/Application/Models"]
+      "#models": ["src/Application/Entities"]
     }
   }
 }
