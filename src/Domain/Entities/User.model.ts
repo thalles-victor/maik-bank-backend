@@ -58,13 +58,12 @@ export class UserModel extends Model {
   isDeleted: boolean;
 }
 
-export class UserUpdateModel {
-  name: Pick<UserModel, 'name'>;
-  avatar: Pick<UserModel, 'avatar'>;
-  password: Pick<UserModel, 'password'>;
-  isBanned: Pick<UserModel, 'isBanned'>;
-  isDeleted: Pick<UserModel, 'isDeleted'>;
-}
+export type UserUpdateModel =
+  | Pick<UserModel, 'name'>
+  | Pick<UserModel, 'avatar'>
+  | Pick<UserModel, 'password'>
+  | Pick<UserModel, 'isBanned'>
+  | Pick<UserModel, 'isDeleted'>;
 
 export type UserModelUniqRef =
   | Pick<UserModel, 'id'>
