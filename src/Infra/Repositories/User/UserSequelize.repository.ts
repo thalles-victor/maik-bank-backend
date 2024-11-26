@@ -2,14 +2,11 @@ import {
   UserModel,
   UserModelUniqRef,
   UserUpdateModel,
-} from 'src/Application/Entities';
+} from 'src/Domain/Entities';
 import { GetWithPaginationResult, PaginationProps } from '@types';
-import { IBaseRepositoryContract } from '../IBaseRepository.contract';
+import { IUserRepositoryContract } from 'src/Domain/Interfaces/Repositories/IUser.repository-contract';
 
-export class UserSequelizeRepository
-  implements
-    IBaseRepositoryContract<UserModel, UserUpdateModel, UserModelUniqRef>
-{
+export class UserSequelizeRepository implements IUserRepositoryContract {
   constructor() {}
 
   create(model: UserModel): Promise<UserModel> {
