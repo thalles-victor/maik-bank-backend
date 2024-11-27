@@ -5,6 +5,7 @@ import { PayloadType, ThrowErrorMessage } from '@types';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { checkAdminCredentials, isAdmin } from '@utils';
+import { ROLE } from '@metadata';
 
 @Injectable()
 export class AuthSignInUseCase {
@@ -37,13 +38,15 @@ export class AuthSignInUseCase {
       }
     }
 
-    if (isAdmin(userDto.email)) {
-      const agentIsAdmin = checkAdminCredentials(
+    const admin = isAdmin(userDto.email);
+
+    if (isAdmin) {
+      const checkCredentials = checkAdminCredentials(
         userDto.email,
         userDto.password,
       );
 
-      if (!agentIsAdmin) {
+      if (!checkCredentials) {
         // Manda uma menssagem fake para enganar se tentar fazer um ataque
         throw new UnauthorizedException({
           ptBr: 'usuário não encontrado',
@@ -58,7 +61,7 @@ export class AuthSignInUseCase {
       sub: user.id,
       isBanned: user.isBanned,
       isDeleted: user.isDeleted,
-      roles: [user.role],
+      roles: admin ? [ROLE.ADMIN] : [user.role],
     };
 
     const token = await this.jwtService.sign(payload);
