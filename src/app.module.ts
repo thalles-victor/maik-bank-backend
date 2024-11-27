@@ -37,6 +37,7 @@ import { RepositoryModule } from './Infra/Repositories/Repository.module';
       models: [UserModel],
     }),
     RepositoryModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
