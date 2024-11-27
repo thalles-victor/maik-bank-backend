@@ -6,5 +6,5 @@ const uid = new ShortUniqueId({ length: 10 });
 export const idGenerator = {
   uuid_v4: v4(),
   shortOly: uid.rnd(),
-  shortStamp: uid.stamp(32),
+  shortStamp: uid.stamp(15),
 };
