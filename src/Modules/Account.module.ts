@@ -4,6 +4,7 @@ import { AccountController } from 'src/Infra/Http/Controllers/Account.controller
 import { UserModule } from './User.module';
 import { KEY_OF_INJECTION } from '@metadata';
 import { AccountSequelizeRepository } from 'src/Infra/Repositories/Sequelize/AccountSequelize.repository';
+import { SelfDepositUseCase } from 'src/Application/UseCases/Account/SelfDeposit/SelfDeposit.usecase';
 
 @Module({
   imports: [UserModule],
@@ -14,6 +15,7 @@ import { AccountSequelizeRepository } from 'src/Infra/Repositories/Sequelize/Acc
       useClass: AccountSequelizeRepository,
     },
     CreateAccountUseCase,
+    SelfDepositUseCase,
   ],
 })
 export class AccountModule {}
