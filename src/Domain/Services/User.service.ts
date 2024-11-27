@@ -1,6 +1,6 @@
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { ThrowErrorMessage } from '@types';
-import { UserModel } from '#models';
+import { UserModel, UserModelUniqRef } from '#models';
 import { idGenerator } from '@utils';
 import * as bcrypt from 'bcrypt';
 import { KEY_OF_INJECTION } from '@metadata';
@@ -43,5 +43,11 @@ export class UserService {
     const userCreated = await this.userRepository.create(newUser);
 
     return userCreated;
+  }
+
+  async getBy(userUnqRef: UserModelUniqRef) {
+    const user = await this.userRepository.getBy(userUnqRef);
+
+    return user ?? null;
   }
 }
