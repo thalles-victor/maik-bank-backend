@@ -7,11 +7,12 @@ import { UserModel } from 'src/Domain/Entities';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { ThrottlerStorageRedisService } from '@nest-lab/throttler-storage-redis';
 import Redis from 'ioredis';
-import { AuthModule } from './Modules/User/Auth.module';
+import { AuthModule } from './Modules/Auth.module';
 import { RepositoryModule } from './Infra/Repositories/Repository.module';
-import { UserModule } from './Modules/User/User.module';
+import { UserModule } from './Modules/User.module';
 import { JwtModule } from '@nestjs/jwt';
 import { AccountModel } from './Domain/Entities/Account.entity';
+import { AccountModule } from './Modules/Account.module';
 
 @Module({
   imports: [
@@ -52,6 +53,7 @@ import { AccountModel } from './Domain/Entities/Account.entity';
     RepositoryModule,
     AuthModule,
     UserModule,
+    AccountModule,
   ],
   controllers: [AppController],
   providers: [AppService],

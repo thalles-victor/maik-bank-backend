@@ -2,7 +2,7 @@ import { KEY_OF_INJECTION } from '@metadata';
 import { Module } from '@nestjs/common';
 import { UserService } from 'src/Domain/Services/User.service';
 import { UserController } from 'src/Infra/Http/Controllers/User.controller';
-import { UserSequelizeRepository } from 'src/Infra/Repositories/User/UserSequelize.repository';
+import { UserSequelizeRepository } from 'src/Infra/Repositories/Sequelize/UserSequelize.repository';
 
 @Module({
   controllers: [UserController],
