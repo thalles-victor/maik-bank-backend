@@ -3,9 +3,9 @@ import { Module } from '@nestjs/common';
 import { AuthSignUpUseCase } from 'src/Application/UseCases/Auth/sign-up/SignUp.usecase';
 import { AuthController } from 'src/Infra/Http/Controllers/Auth.controller';
 import { UserSequelizeRepository } from 'src/Infra/Repositories/Sequelize/UserSequelize.repository';
-import { UserModule } from './User.module';
 import { AuthSignInUseCase } from 'src/Application/UseCases/Auth/Sign-in/SignIn.usecase';
 import { AuthCurrent } from 'src/Application/UseCases/Auth/Current/Current.usecase';
+import { UserModule } from './User.module';
 
 @Module({
   imports: [UserModule],
