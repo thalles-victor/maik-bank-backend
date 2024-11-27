@@ -8,3 +8,8 @@ export type GetWithPaginationResult<D> = {
   data: D;
   metadata: PaginationProps & { total: number };
 };
+
+export type ThrowErrorMessage = {
+  ptBr: string;
+  enUs: string;
+};
