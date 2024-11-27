@@ -1,4 +1,5 @@
 import { Column, Table, Model, DataType } from 'sequelize-typescript';
+import { ROLE } from '@metadata';
 
 @Table({ tableName: 'Users' })
 export class UserModel extends Model {
@@ -50,6 +51,16 @@ export class UserModel extends Model {
     },
   })
   dateBirth: string;
+
+  @Column({
+    type: DataType.STRING(10),
+    allowNull: false,
+    validate: {
+      len: [1, 10],
+    },
+    defaultValue: ROLE.USER,
+  })
+  role: ROLE;
 
   @Column({ type: DataType.BOOLEAN, defaultValue: false })
   isBanned: boolean;
