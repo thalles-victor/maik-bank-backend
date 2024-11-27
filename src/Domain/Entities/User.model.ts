@@ -44,13 +44,12 @@ export class UserModel extends Model {
 
   @Column({
     type: DataType.STRING(11),
-    allowNull: true,
+    allowNull: false,
     validate: {
       len: [1, 10],
     },
-    defaultValue: null,
   })
-  dateBirth?: string;
+  dateBirth: string;
 
   @Column({ type: DataType.BOOLEAN, defaultValue: false })
   isBanned: boolean;
