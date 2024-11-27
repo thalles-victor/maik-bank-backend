@@ -7,6 +7,8 @@ import { UserModel } from 'src/Domain/Entities';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { ThrottlerStorageRedisService } from '@nest-lab/throttler-storage-redis';
 import Redis from 'ioredis';
+import { AuthModule } from './Modules/User/Auth.module';
+import { RepositoryModule } from './Infra/Repositories/Repository.module';
 
 @Module({
   imports: [
@@ -34,6 +36,7 @@ import Redis from 'ioredis';
       database: env.POSTGRES_DB,
       models: [UserModel],
     }),
+    RepositoryModule,
   ],
   controllers: [AppController],
   providers: [AppService],
