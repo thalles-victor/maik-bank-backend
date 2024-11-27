@@ -1,5 +1,6 @@
-import { Column, Table, Model, DataType } from 'sequelize-typescript';
+import { Column, Table, Model, DataType, HasMany } from 'sequelize-typescript';
 import { ROLE } from '@metadata';
+import { AccountModel } from './Account.entity';
 
 @Table({ tableName: 'Users' })
 export class UserModel extends Model {
@@ -67,6 +68,9 @@ export class UserModel extends Model {
 
   @Column({ type: DataType.BOOLEAN, defaultValue: false })
   isDeleted: boolean;
+
+  @HasMany(() => AccountModel)
+  accounts: AccountModel[];
 }
 
 export type UserUpdateModel =

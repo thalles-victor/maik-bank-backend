@@ -6,3 +6,8 @@ export enum ROLE {
   USER = 'USER',
   ADMIN = 'ADMIN',
 }
+
+export enum ACCOUNT_STATUS {
+  ACTIVE = 'ACTIVE',
+  INACTIVE = 'INACTIVE',
+}
