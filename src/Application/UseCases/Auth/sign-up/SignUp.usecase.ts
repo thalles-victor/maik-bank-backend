@@ -29,7 +29,7 @@ export class AuthSignUpUseCase {
       await bcrypt.genSalt(12),
     );
 
-    const newUser = Object.assign(new UserModel(), {
+    const newUser = Object.assign(new UserModel().dataValues, {
       id: idGenerator.shortOly,
       name: userDto.name,
       email: userDto.email,
@@ -40,10 +40,8 @@ export class AuthSignUpUseCase {
       dateBirth: userDto.dateBirth,
     } as UserModel);
 
-    console.log('Hei', newUser);
+    const userCreated = await this.userRepository.create(newUser);
 
-    // const userCreated = await this.userRepository.create(newUser);
-
-    return newUser;
+    return userCreated;
   }
 }
