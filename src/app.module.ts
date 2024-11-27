@@ -9,6 +9,7 @@ import { ThrottlerStorageRedisService } from '@nest-lab/throttler-storage-redis'
 import Redis from 'ioredis';
 import { AuthModule } from './Modules/User/Auth.module';
 import { RepositoryModule } from './Infra/Repositories/Repository.module';
+import { UserModule } from './Modules/User/User.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { RepositoryModule } from './Infra/Repositories/Repository.module';
     }),
     RepositoryModule,
     AuthModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],
