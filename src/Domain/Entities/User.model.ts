@@ -15,15 +15,6 @@ export class UserModel extends Model {
   name: string;
 
   @Column({
-    type: DataType.STRING(40),
-    allowNull: false,
-    validate: {
-      len: [1, 40],
-    },
-  })
-  username: string;
-
-  @Column({
     type: DataType.STRING(70),
     allowNull: false,
     validate: {
@@ -51,6 +42,16 @@ export class UserModel extends Model {
   })
   avatar?: string;
 
+  @Column({
+    type: DataType.STRING(11),
+    allowNull: true,
+    validate: {
+      len: [1, 10],
+    },
+    defaultValue: null,
+  })
+  dateBirth?: string;
+
   @Column({ type: DataType.BOOLEAN, defaultValue: false })
   isBanned: boolean;
 
@@ -65,7 +66,4 @@ export type UserUpdateModel =
   | Pick<UserModel, 'isBanned'>
   | Pick<UserModel, 'isDeleted'>;
 
-export type UserModelUniqRef =
-  | Pick<UserModel, 'id'>
-  | Pick<UserModel, 'username'>
-  | Pick<UserModel, 'email'>;
+export type UserModelUniqRef = Pick<UserModel, 'id'> | Pick<UserModel, 'email'>;
