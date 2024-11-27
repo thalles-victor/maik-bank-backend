@@ -23,8 +23,9 @@ export class AuthSignInUseCase {
         enUs: 'user not registered',
       } as ThrowErrorMessage);
     }
+    const admin = isAdmin(userDto.email);
 
-    if (!isAdmin(userDto.email)) {
+    if (!admin) {
       const passwordMatch = await bcrypt.compare(
         userDto.password,
         user.password,
@@ -38,9 +39,7 @@ export class AuthSignInUseCase {
       }
     }
 
-    const admin = isAdmin(userDto.email);
-
-    if (isAdmin) {
+    if (admin) {
       const checkCredentials = checkAdminCredentials(
         userDto.email,
         userDto.password,

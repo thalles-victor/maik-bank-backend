@@ -16,6 +16,6 @@ export function checkAdminCredentials(email: string, password: string) {
   return env.ADMIN_EMAIL === email && password === env.ADMIN_PASSWORD;
 }
 
-export function isAdmin(email) {
+export function isAdmin(email: string) {
   return env.ADMIN_EMAIL === email;
 }
