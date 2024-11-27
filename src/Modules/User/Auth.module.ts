@@ -4,6 +4,7 @@ import { AuthSignUpUseCase } from 'src/Application/UseCases/Auth/sign-up/SignUp.
 import { AuthController } from 'src/Infra/Http/Controllers/Auth.controller';
 import { UserSequelizeRepository } from 'src/Infra/Repositories/User/UserSequelize.repository';
 import { UserModule } from './User.module';
+import { AuthSignInUseCase } from 'src/Application/UseCases/Auth/Sign-in/SignIn.usecase';
 
 @Module({
   imports: [UserModule],
@@ -14,6 +15,7 @@ import { UserModule } from './User.module';
       useClass: UserSequelizeRepository,
     },
     AuthSignUpUseCase,
+    AuthSignInUseCase,
   ],
 })
 export class AuthModule {}
