@@ -10,6 +10,7 @@ import Redis from 'ioredis';
 import { AuthModule } from './Modules/User/Auth.module';
 import { RepositoryModule } from './Infra/Repositories/Repository.module';
 import { UserModule } from './Modules/User/User.module';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -36,6 +37,16 @@ import { UserModule } from './Modules/User/User.module';
       password: env.POSTGRES_PASSWORD,
       database: env.POSTGRES_DB,
       models: [UserModel],
+    }),
+    JwtModule.register({
+      global: true, // compartilha o módulo e as configurações para toda a aplicação
+      secret: env.JWT_SECRET,
+      signOptions: {
+        expiresIn: '24h',
+      },
+      verifyOptions: {
+        ignoreExpiration: false,
+      },
     }),
     RepositoryModule,
     AuthModule,
