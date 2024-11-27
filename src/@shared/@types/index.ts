@@ -13,3 +13,10 @@ export type ThrowErrorMessage = {
   ptBr: string;
   enUs: string;
 };
+
+export type PayloadType = {
+  sub: string;
+  roles: string[];
+  isDeleted: boolean;
+  isBanned: boolean;
+};
