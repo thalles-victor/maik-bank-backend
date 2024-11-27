@@ -39,9 +39,20 @@ export class AccountModel extends Model {
   })
   status: ACCOUNT_STATUS;
 
+  @Column({ type: DataType.BOOLEAN, defaultValue: false })
+  isDeleted: boolean;
+
   @ForeignKey(() => UserModel)
   userId: string;
 
   @BelongsTo(() => UserModel)
   user: UserModel;
 }
+
+export type AccountUpdateModel =
+  | Pick<AccountModel, 'name'>
+  | Pick<AccountModel, 'balance'>
+  | Pick<AccountModel, 'status'>
+  | Pick<AccountModel, 'isDeleted'>;
+
+export type AccountModelUniqRef = Pick<AccountModel, 'id'>;
