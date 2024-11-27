@@ -4,6 +4,7 @@ import { AuthSignInDto } from './SignIn.dto';
 import { PayloadType, ThrowErrorMessage } from '@types';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
+import { checkAdminCredentials, isAdmin } from '@utils';
 
 @Injectable()
 export class AuthSignInUseCase {
@@ -22,13 +23,35 @@ export class AuthSignInUseCase {
       } as ThrowErrorMessage);
     }
 
-    const passwordMatch = await bcrypt.compare(userDto.password, user.password);
+    if (!isAdmin(userDto.email)) {
+      const passwordMatch = await bcrypt.compare(
+        userDto.password,
+        user.password,
+      );
 
-    if (!passwordMatch) {
-      throw new UnauthorizedException({
-        ptBr: 'a senha está incorreta',
-        enUs: 'incorrect password',
-      } as ThrowErrorMessage);
+      if (!passwordMatch) {
+        throw new UnauthorizedException({
+          ptBr: 'a senha está incorreta',
+          enUs: 'incorrect password',
+        } as ThrowErrorMessage);
+      }
+    }
+
+    if (isAdmin(userDto.email)) {
+      const agentIsAdmin = checkAdminCredentials(
+        userDto.email,
+        userDto.password,
+      );
+
+      if (!agentIsAdmin) {
+        // Manda uma menssagem fake para enganar se tentar fazer um ataque
+        throw new UnauthorizedException({
+          ptBr: 'usuário não encontrado',
+          enUs: 'user not found',
+          'PROPOSITAL!!!!':
+            'Manda uma menssagem fake de erro para enganar um atacante. Isso se chama error obfuscation',
+        } as ThrowErrorMessage);
+      }
     }
 
     const payload: PayloadType = {
