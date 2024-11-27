@@ -42,6 +42,12 @@ export class AccountModel extends Model {
   @Column({ type: DataType.BOOLEAN, defaultValue: false })
   isDeleted: boolean;
 
+  @Column({ type: DataType.DATE })
+  createdAt: Date;
+
+  @Column({ type: DataType.DATE })
+  updatedAt: Date;
+
   @ForeignKey(() => UserModel)
   userId: string;
 

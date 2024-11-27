@@ -69,6 +69,12 @@ export class UserModel extends Model {
   @Column({ type: DataType.BOOLEAN, defaultValue: false })
   isDeleted: boolean;
 
+  @Column({ type: DataType.DATE })
+  createdAt: string;
+
+  @Column({ type: DataType.DATE })
+  updatedAt: string;
+
   @HasMany(() => AccountModel)
   accounts: AccountModel[];
 }
