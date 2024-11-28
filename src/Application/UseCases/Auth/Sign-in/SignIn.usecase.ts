@@ -1,7 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UserService } from 'src/Domain/Services/User.service';
 import { AuthSignInDto } from './SignIn.dto';
-import { PayloadType, ThrowErrorMessage } from '@types';
+import { AuthResponse, PayloadType, ThrowErrorMessage } from '@types';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { checkAdminCredentials, isAdmin } from '@utils';
@@ -14,7 +14,7 @@ export class AuthSignInUseCase {
     private readonly jwtService: JwtService,
   ) {}
 
-  async execute(userDto: AuthSignInDto) {
+  async execute(userDto: AuthSignInDto): Promise<AuthResponse> {
     const user = await this.userService.getBy({ email: userDto.email });
 
     if (!user) {

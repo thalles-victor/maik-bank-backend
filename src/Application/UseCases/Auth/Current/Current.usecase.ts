@@ -1,3 +1,4 @@
+import { UserModel } from '#models';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PayloadType, ThrowErrorMessage } from '@types';
 import { UserService } from 'src/Domain/Services/User.service';
@@ -6,7 +7,7 @@ import { UserService } from 'src/Domain/Services/User.service';
 export class AuthCurrent {
   constructor(private readonly userService: UserService) {}
 
-  async execute(payload: PayloadType) {
+  async execute(payload: PayloadType): Promise<UserModel> {
     const user = await this.userService.getBy({ id: payload.sub });
 
     if (!user) {
@@ -16,8 +17,6 @@ export class AuthCurrent {
       } as ThrowErrorMessage);
     }
 
-    return {
-      user: user,
-    };
+    return user;
   }
 }

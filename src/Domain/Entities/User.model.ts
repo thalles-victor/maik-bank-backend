@@ -1,6 +1,7 @@
 import { Column, Table, Model, DataType, HasMany } from 'sequelize-typescript';
 import { ROLE } from '@metadata';
 import { AccountModel } from './Account.entity';
+import { Exclude } from 'class-transformer';
 
 @Table({ tableName: 'Users' })
 export class UserModel extends Model {
@@ -32,6 +33,7 @@ export class UserModel extends Model {
       len: [1, 255],
     },
   })
+  @Exclude()
   password: string;
 
   @Column({

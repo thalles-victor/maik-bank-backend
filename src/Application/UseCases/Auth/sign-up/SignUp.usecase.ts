@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { AuthSignUpDto } from './SignUp.dto';
 import { UserService } from 'src/Domain/Services/User.service';
 import { JwtService } from '@nestjs/jwt';
-import { PayloadType } from '@types';
+import { AuthResponse, PayloadType } from '@types';
 
 @Injectable()
 export class AuthSignUpUseCase {
@@ -11,7 +11,7 @@ export class AuthSignUpUseCase {
     private readonly jwtService: JwtService,
   ) {}
 
-  async execute(userDto: AuthSignUpDto) {
+  async execute(userDto: AuthSignUpDto): Promise<AuthResponse> {
     const userCreated = await this.userService.create(userDto);
 
     //send email

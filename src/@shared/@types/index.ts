@@ -1,3 +1,5 @@
+import { UserModel } from '#models';
+
 export type PaginationProps = {
   page: number;
   limit: number;
@@ -19,4 +21,22 @@ export type PayloadType = {
   roles: string[];
   isDeleted: boolean;
   isBanned: boolean;
+};
+
+export interface ApiResponse<T> {
+  statusCode: number;
+  message: string;
+  data: T;
+  meta?: {
+    total?: number;
+    page?: number;
+    per_page?: number;
+    order: 'ASC' | 'DESC';
+  };
+  href?: string;
+}
+
+export type AuthResponse = {
+  user: UserModel;
+  access_token: string;
 };
