@@ -1,7 +1,7 @@
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { ThrowErrorMessage } from '@types';
 import { UserModel, UserModelUniqRef } from '#models';
-import { idGenerator } from '@utils';
+import { uuid } from '@utils';
 import * as bcrypt from 'bcrypt';
 import { KEY_OF_INJECTION } from '@metadata';
 import { IUserRepositoryContract } from '../Interfaces/Repositories/IUser.repository-contract';
@@ -30,7 +30,7 @@ export class UserService {
     );
 
     const newUser = Object.assign(new UserModel().dataValues, {
-      id: idGenerator.shortOly,
+      id: uuid('v4'),
       name: userDto.name,
       email: userDto.email,
       password: hashedPassword,

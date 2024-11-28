@@ -82,6 +82,8 @@ export class TransactionAggregate extends Model {
   accountSender: AccountModel;
 }
 
-export type TransactionUpdateAggregate = Pick<TransactionAggregate, 'status'>;
+export type TransactionUpdateAggregate =
+  | Pick<TransactionAggregate, 'status'>
+  | Pick<TransactionAggregate, 'updatedAt'>;
 
 export type TransactionAggregateUnqRef = Pick<TransactionAggregate, 'id'>;

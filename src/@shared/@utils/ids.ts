@@ -3,8 +3,24 @@ import ShortUniqueId from 'short-unique-id';
 
 const uid = new ShortUniqueId({ length: 10 });
 
-export const idGenerator = {
-  uuid_v4: v4(),
-  shortOly: uid.rnd(),
-  shortStamp: uid.stamp(15),
-};
+export function uuid(version: 'v1' | 'v2' | 'v3' | 'v4') {
+  switch (version) {
+    case 'v1':
+      throw new Error('method not implemented');
+    case 'v2':
+      throw new Error('method not implemented');
+    case 'v3':
+      throw new Error('method not implemented');
+    case 'v4':
+      return v4();
+  }
+}
+
+export function shortId(type: 'shortOnly' | 'timestap', size: number = 15) {
+  switch (type) {
+    case 'shortOnly':
+      return uid.rnd(size);
+    case 'timestap':
+      return uid.stamp(size);
+  }
+}

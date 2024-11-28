@@ -1,7 +1,7 @@
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { CreateAccountDto } from './CreateAccount.dto';
 import { AccountModel } from 'src/Domain/Entities/Account.entity';
-import { idGenerator } from '@utils';
+import { shortId } from '@utils';
 import { ACCOUNT_STATUS, KEY_OF_INJECTION } from '@metadata';
 import { PayloadType, ThrowErrorMessage } from '@types';
 import { UserService } from 'src/Domain/Services/User.service';
@@ -26,7 +26,7 @@ export class CreateAccountUseCase {
     }
 
     const newAccount = Object.assign(new AccountModel().dataValues, {
-      id: idGenerator.shortStamp,
+      id: shortId('shortOnly'),
       name: name,
       balance: 0,
       status: ACCOUNT_STATUS.ACTIVE,

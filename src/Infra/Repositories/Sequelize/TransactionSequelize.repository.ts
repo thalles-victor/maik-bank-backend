@@ -1,5 +1,6 @@
 import { InjectModel } from '@nestjs/sequelize';
 import { InternalServerErrorException } from '@nestjs/common';
+import { Sequelize } from 'sequelize-typescript';
 
 import { PaginationProps, GetWithPaginationResult } from '@types';
 import {
@@ -7,16 +8,38 @@ import {
   TransactionAggregateUnqRef,
   TransactionUpdateAggregate,
 } from 'src/Domain/Aggregates/Transactions.aggregate';
-import { ITransactionRepositoryContract } from 'src/Domain/Interfaces/Repositories/ITransaction.repository-contract';
+import {
+  ITransactionRepositoryContract,
+  TransferProps,
+} from 'src/Domain/Interfaces/Repositories/ITransaction.repository-contract';
 import { splitKeyAndValue } from 'src/@shared/@utils/tools';
+import { AccountModel } from 'src/Domain/Entities/Account.entity';
+import { AccountModule } from 'src/Modules/Account.module';
+import { env } from '@utils';
+import { UserModel } from '#models';
+import { TransactionStatus } from '@metadata';
 
 export class TransactionSequelizeRepository
   implements ITransactionRepositoryContract
 {
+  private readonly sequelize: Sequelize;
+
   constructor(
     @InjectModel(TransactionAggregate)
     private readonly transactionModel: typeof TransactionAggregate,
-  ) {}
+    @InjectModel(AccountModel)
+    private readonly accountModel: typeof AccountModule,
+  ) {
+    this.sequelize = new Sequelize({
+      dialect: 'postgres',
+      host: env.POSTGRES_HOST,
+      port: env.POSTGRES_PORT,
+      username: env.POSTGRES_USER,
+      password: env.POSTGRES_PASSWORD,
+      database: env.POSTGRES_DB,
+      models: [AccountModel, UserModel, transactionModel],
+    });
+  }
 
   async create(
     model: Partial<TransactionAggregate>,
@@ -112,5 +135,55 @@ export class TransactionSequelizeRepository
         order: pagination.order,
       },
     };
+  }
+
+  async transfer(data: TransferProps): Promise<any> {
+    const transaction = await this.sequelize.transaction();
+
+    try {
+      const senderAccount = await AccountModel.findOne({
+        where: { id: data.senderId },
+        transaction,
+      });
+
+      const receiverAccount = await AccountModel.findOne({
+        where: { id: data.targetId },
+        transaction,
+      });
+
+      if (!senderAccount || !receiverAccount) {
+        throw new Error('Conta remetente ou destinatária não encontrada');
+      }
+
+      if (senderAccount.balance < data.value) {
+        throw new Error('Saldo insuficiente na conta remetente');
+      }
+
+      senderAccount.balance -= data.value;
+      receiverAccount.balance += data.value;
+
+      await senderAccount.save({ transaction });
+      await receiverAccount.save({ transaction });
+
+      const bankTransaction = await this.getBy({
+        id: data.transactionId,
+      });
+
+      const bankTransactionUpdated = await bankTransaction.update(
+        {
+          status: TransactionStatus.COMPLETED,
+          updateAt: new Date(),
+        },
+        {
+          transaction,
+        },
+      );
+
+      await transaction.commit();
+      return bankTransactionUpdated;
+    } catch (error) {
+      console.error(error);
+      await transaction.rollback();
+    }
   }
 }

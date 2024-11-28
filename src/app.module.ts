@@ -14,6 +14,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { AccountModel } from './Domain/Entities/Account.entity';
 import { AccountModule } from './Modules/Account.module';
 import { TransactionAggregate } from './Domain/Aggregates/Transactions.aggregate';
+import { TransactionModule } from './Modules/Transaction.module';
 
 @Module({
   imports: [
@@ -55,6 +56,7 @@ import { TransactionAggregate } from './Domain/Aggregates/Transactions.aggregate
     AuthModule,
     UserModule,
     AccountModule,
+    TransactionModule,
   ],
   controllers: [AppController],
   providers: [AppService],
