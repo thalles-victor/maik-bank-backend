@@ -4,7 +4,7 @@ import { AppService } from './app.service';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { env } from '@utils';
 import { UserModel } from 'src/Domain/Entities';
-import { ThrottlerModule } from '@nestjs/throttler';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { ThrottlerStorageRedisService } from '@nest-lab/throttler-storage-redis';
 import Redis from 'ioredis';
 import { AuthModule } from './Modules/Auth.module';
@@ -15,14 +15,15 @@ import { AccountModel } from './Domain/Entities/Account.entity';
 import { AccountModule } from './Modules/Account.module';
 import { TransactionAggregate } from './Domain/Aggregates/Transactions.aggregate';
 import { TransactionModule } from './Modules/Transaction.module';
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
   imports: [
     ThrottlerModule.forRoot({
       throttlers: [
         {
-          ttl: 10000,
-          limit: 10,
+          ttl: 6000,
+          limit: 5,
         },
       ],
       storage: new ThrottlerStorageRedisService(
@@ -59,6 +60,12 @@ import { TransactionModule } from './Modules/Transaction.module';
     TransactionModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
+    AppService,
+  ],
 })
 export class AppModule {}
