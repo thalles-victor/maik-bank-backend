@@ -7,6 +7,7 @@ import {
   BelongsTo,
 } from 'sequelize-typescript';
 import { AccountModel } from '../Entities/Account.entity';
+import { TransactionStatus, TypeOfTransaction } from '@metadata';
 
 @Table({ tableName: 'Transactions' })
 export class TransactionAggregate extends Model {
@@ -20,7 +21,7 @@ export class TransactionAggregate extends Model {
       len: [1, 15],
     },
   })
-  type: 'DEPOSIT' | 'WITHDRAW' | 'TRANSFER';
+  type: TypeOfTransaction;
 
   @Column({
     type: DataType.NUMBER(),
@@ -61,6 +62,9 @@ export class TransactionAggregate extends Model {
   @Column({ type: DataType.DATE })
   createdAt: Date;
 
+  @Column({ type: DataType.DATE })
+  updatedAt: Date;
+
   @Column({
     type: DataType.STRING(15),
     allowNull: true,
@@ -69,7 +73,7 @@ export class TransactionAggregate extends Model {
     },
     defaultValue: null,
   })
-  status: 'PENDING' | 'COMPLETED' | 'CANCELLED';
+  status: TransactionStatus;
 
   @BelongsTo(() => AccountModel)
   accountTarget: AccountModel;
