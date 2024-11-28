@@ -13,6 +13,7 @@ import { UserModule } from './Modules/User.module';
 import { JwtModule } from '@nestjs/jwt';
 import { AccountModel } from './Domain/Entities/Account.entity';
 import { AccountModule } from './Modules/Account.module';
+import { TransactionAggregate } from './Domain/Aggregates/Transactions.aggregate';
 
 @Module({
   imports: [
@@ -38,7 +39,7 @@ import { AccountModule } from './Modules/Account.module';
       username: env.POSTGRES_USER,
       password: env.POSTGRES_PASSWORD,
       database: env.POSTGRES_DB,
-      models: [UserModel, AccountModel],
+      models: [UserModel, AccountModel, TransactionAggregate],
     }),
     JwtModule.register({
       global: true, // compartilha o módulo e as configurações para toda a aplicação
