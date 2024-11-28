@@ -19,6 +19,12 @@ import { IUserRepositoryContract } from 'src/Domain/Interfaces/Repositories/IUse
 import { IAccountRepositoryContact } from 'src/Domain/Interfaces/Repositories/IAccount.repository-contract';
 import { TransactionAggregate } from 'src/Domain/Aggregates/Transactions.aggregate';
 import { shortId } from '@utils';
+import { getTransactionVoucherUrl } from 'src/@shared/pdf/voucher';
+
+export interface TransferUseCaseResult {
+  transaction: TransactionAggregate;
+  pdfVoucherUrl: string;
+}
 
 @Injectable()
 export class TransferUseCase {
@@ -31,7 +37,10 @@ export class TransferUseCase {
     private readonly accountRepository: IAccountRepositoryContact,
   ) {}
 
-  async execute(auth: PayloadType, transferDto: TransferDto) {
+  async execute(
+    auth: PayloadType,
+    transferDto: TransferDto,
+  ): Promise<TransferUseCaseResult> {
     const user = await this.userRepository.getBy({ id: auth.sub });
 
     if (transferDto.senderId === transferDto.targetId) {
@@ -115,18 +124,29 @@ export class TransferUseCase {
     const transaction = await this.transactionRepository.create(newTransaction);
 
     try {
-      return await this.transactionRepository.transfer({
+      const transactionUpdated = await this.transactionRepository.transfer({
         senderId: transferDto.senderId,
         targetId: transferDto.targetId,
         value: transferDto.value,
         transactionId: transaction.dataValues.id,
       });
+
+      return {
+        transaction: transactionUpdated,
+        pdfVoucherUrl: getTransactionVoucherUrl(transactionUpdated.id),
+      };
     } catch (error) {
       console.log(error);
-      return this.transactionRepository.update(
+
+      const canceledTransaction = await this.transactionRepository.update(
         { id: transaction.id },
         { status: TransactionStatus.CANCELLED, updatedAt: new Date() },
       );
+
+      return {
+        transaction: canceledTransaction,
+        pdfVoucherUrl: getTransactionVoucherUrl(canceledTransaction.id),
+      };
     }
   }
 }

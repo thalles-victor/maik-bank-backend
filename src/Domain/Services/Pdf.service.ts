@@ -1,9 +1,7 @@
 import { TransactionAggregate } from '../Aggregates/Transactions.aggregate';
-import * as fs from 'fs';
 import { Injectable } from '@nestjs/common';
 import { pdfFonts } from 'src/@shared/pdf/fonts';
 import PdfPrinter from 'pdfmake';
-import * as path from 'path';
 
 @Injectable()
 export class PdfService {
