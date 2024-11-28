@@ -33,8 +33,6 @@ export class AuthController {
   ): Promise<ApiResponse<AuthResponse>> {
     const result = await this.signUpUseCase.execute(userDto);
 
-    console.log(result);
-
     const user = plainToInstance(UserModel, result.user.dataValues, {
       exposeUnsetFields: false,
     });
@@ -65,6 +63,7 @@ export class AuthController {
       },
       message: 'success',
       statusCode: 200,
+      href: env.BACKEND_BASE_URL + env.BACKEND_PORT + '/v1/auth/current',
     };
   }
 
