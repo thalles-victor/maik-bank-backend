@@ -9,6 +9,7 @@ import { AccountSequelizeRepository } from 'src/Infra/Repositories/Sequelize/Acc
 import { TransactionSequelizeRepository } from 'src/Infra/Repositories/Sequelize/TransactionSequelize.repository';
 import { UserSequelizeRepository } from 'src/Infra/Repositories/Sequelize/UserSequelize.repository';
 import { UserModule } from './User.module';
+import { TransactionResolver } from 'src/Infra/Http/Graphql/Transaction.resolver';
 
 @Module({
   imports: [UserModule],
@@ -26,6 +27,7 @@ import { UserModule } from './User.module';
       provide: KEY_OF_INJECTION.ACCOUNT_REPOSITORY,
       useClass: AccountSequelizeRepository,
     },
+    TransactionResolver,
     PdfService,
 
     // use cases

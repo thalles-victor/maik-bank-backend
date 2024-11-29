@@ -8,12 +8,16 @@ import {
 } from 'sequelize-typescript';
 import { AccountModel } from '../Entities/Account.entity';
 import { TransactionStatus, TypeOfTransaction } from '@metadata';
+import { Field, HideField, ObjectType } from '@nestjs/graphql';
 
+@ObjectType()
 @Table({ tableName: 'Transactions' })
 export class TransactionAggregate extends Model {
+  @Field(() => String)
   @Column({ primaryKey: true })
   id: string;
 
+  @Field(() => String)
   @Column({
     type: DataType.STRING(15),
     allowNull: false,
@@ -23,12 +27,14 @@ export class TransactionAggregate extends Model {
   })
   type: TypeOfTransaction;
 
+  @Field(() => String)
   @Column({
     type: DataType.NUMBER(),
     allowNull: false,
   })
   value: number;
 
+  @Field(() => String)
   @Column({
     type: DataType.STRING(50),
     allowNull: false,
@@ -39,6 +45,7 @@ export class TransactionAggregate extends Model {
   @ForeignKey(() => AccountModel)
   accountTargetId: string;
 
+  @Field(() => String, { nullable: true })
   @Column({
     type: DataType.STRING(50),
     allowNull: true,
@@ -49,6 +56,7 @@ export class TransactionAggregate extends Model {
   @ForeignKey(() => AccountModel)
   accountSenderId: string | null;
 
+  @Field(() => String)
   @Column({
     type: DataType.STRING(20),
     allowNull: true,
@@ -59,12 +67,15 @@ export class TransactionAggregate extends Model {
   })
   description: string | null;
 
+  @Field(() => String)
   @Column({ type: DataType.DATE })
   createdAt: Date;
 
+  @Field(() => String)
   @Column({ type: DataType.DATE })
   updatedAt: Date;
 
+  @Field(() => String)
   @Column({
     type: DataType.STRING(15),
     allowNull: true,
@@ -75,9 +86,11 @@ export class TransactionAggregate extends Model {
   })
   status: TransactionStatus;
 
+  @HideField()
   @BelongsTo(() => AccountModel)
   accountTarget: AccountModel;
 
+  @HideField()
   @BelongsTo(() => AccountModel)
   accountSender: AccountModel;
 }
