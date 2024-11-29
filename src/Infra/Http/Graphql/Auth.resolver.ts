@@ -3,6 +3,7 @@ import { Args, Mutation, Resolver } from '@nestjs/graphql';
 import { plainToInstance } from 'class-transformer';
 import { env } from 'process';
 import { AuthCurrent } from 'src/Application/UseCases/Auth/Current/Current.usecase';
+import { AuthSignInDto } from 'src/Application/UseCases/Auth/Sign-in/SignIn.dto';
 import { AuthSignInUseCase } from 'src/Application/UseCases/Auth/Sign-in/SignIn.usecase';
 import { AuthSignUpDto } from 'src/Application/UseCases/Auth/sign-up/SignUp.dto';
 import { AuthSignUpUseCase } from 'src/Application/UseCases/Auth/sign-up/SignUp.usecase';
@@ -33,6 +34,28 @@ export class AuthResolver {
       },
       message: 'success',
       statusCode: 201,
+      href: env.BACKEND_BASE_URL + env.BACKEND_PORT + '/v1/auth/current',
+      meta: null,
+    };
+  }
+
+  @Mutation(() => AuthObjectTypeResponse)
+  async signIn(
+    @Args('signInDto') signInDto: AuthSignInDto,
+  ): Promise<AuthObjectTypeResponse> {
+    const result = await this.signInUseCase.execute(signInDto);
+
+    const sanitizedUser = plainToInstance(UserModel, result.user.dataValues, {
+      exposeUnsetFields: false,
+    });
+
+    return {
+      data: {
+        user: sanitizedUser,
+        access_token: result.access_token,
+      },
+      message: 'success',
+      statusCode: 200,
       href: env.BACKEND_BASE_URL + env.BACKEND_PORT + '/v1/auth/current',
       meta: null,
     };
