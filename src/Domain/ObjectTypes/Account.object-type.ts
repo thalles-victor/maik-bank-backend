@@ -6,3 +6,9 @@ import { ApiResponseObjectType } from './ApiResponse.object-type';
 export class AccountObjectTypeResponse extends ApiResponseObjectType(
   AccountModel,
 ) {}
+
+@ObjectType()
+export class AccountListObjectTypeResponse extends ApiResponseObjectType(
+  AccountModel,
+  { isArray: true },
+) {}

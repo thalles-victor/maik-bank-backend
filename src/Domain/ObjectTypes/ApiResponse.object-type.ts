@@ -1,6 +1,10 @@
 import { Type } from '@nestjs/common';
 import { Field, ObjectType, Int } from '@nestjs/graphql';
 
+export type ApiResponseOptions = {
+  isArray: boolean;
+};
+
 @ObjectType()
 class MetaType {
   @Field(() => Int, { nullable: true })
@@ -16,7 +20,12 @@ class MetaType {
   order?: 'ASC' | 'DESC';
 }
 
-export function ApiResponseObjectType<T>(classRef: Type<T>) {
+export function ApiResponseObjectType<T>(
+  classRef: Type<T>,
+  options: ApiResponseOptions = {
+    isArray: false,
+  },
+) {
   @ObjectType({ isAbstract: true })
   abstract class ApiResponseObjectTypeClass {
     @Field(() => Int)
@@ -25,8 +34,8 @@ export function ApiResponseObjectType<T>(classRef: Type<T>) {
     @Field()
     message: string;
 
-    @Field(() => classRef, { nullable: true })
-    data?: T;
+    @Field(() => (options.isArray ? [classRef] : classRef), { nullable: true })
+    data?: T | T[];
 
     @Field(() => MetaType, { nullable: true })
     meta?: MetaType;
