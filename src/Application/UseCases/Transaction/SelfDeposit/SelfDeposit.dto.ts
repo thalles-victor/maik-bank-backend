@@ -1,3 +1,4 @@
+import { Field, InputType } from '@nestjs/graphql';
 import {
   IsNotEmpty,
   IsNumber,
@@ -8,13 +9,16 @@ import {
   Length,
 } from 'class-validator';
 
+@InputType()
 export class SelfDepositDto {
+  @Field(() => Number)
   @IsNumber()
   @IsPositive()
   @Min(5)
   @Max(10000)
   value: number;
 
+  @Field(() => String)
   @IsString()
   @IsNotEmpty()
   @Length(0, 15)

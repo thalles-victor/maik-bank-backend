@@ -56,7 +56,7 @@ export class TransactionAggregate extends Model {
   @ForeignKey(() => AccountModel)
   accountSenderId: string | null;
 
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   @Column({
     type: DataType.STRING(20),
     allowNull: true,
