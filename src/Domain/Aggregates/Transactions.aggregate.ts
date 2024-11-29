@@ -41,13 +41,13 @@ export class TransactionAggregate extends Model {
 
   @Column({
     type: DataType.STRING(50),
-    allowNull: false,
+    allowNull: true,
     validate: {
       len: [1, 50],
     },
   })
   @ForeignKey(() => AccountModel)
-  accountSenderId: string;
+  accountSenderId: string | null;
 
   @Column({
     type: DataType.STRING(20),
