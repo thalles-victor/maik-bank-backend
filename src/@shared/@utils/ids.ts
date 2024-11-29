@@ -16,11 +16,11 @@ export function uuid(version: 'v1' | 'v2' | 'v3' | 'v4') {
   }
 }
 
-export function shortId(type: 'shortOnly' | 'timestap', size: number = 15) {
+export function shortId(type: 'shortOnly' | 'timestamp', size: number = 15) {
   switch (type) {
     case 'shortOnly':
       return uid.rnd(size);
-    case 'timestap':
+    case 'timestamp':
       return uid.stamp(size);
   }
 }
