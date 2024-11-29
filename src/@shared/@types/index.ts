@@ -2,8 +2,10 @@ import { UserModel } from '#models';
 import { TransactionAggregate } from 'src/Domain/Aggregates/Transactions.aggregate';
 
 export type PaginationProps = {
-  page: number;
-  limit: number;
+  page?: number;
+  limit?: number;
+  search?: string;
+  filters?: Record<string, any>;
   order?: 'ASC' | 'DESC';
 };
 
@@ -28,12 +30,7 @@ export interface ApiResponse<T> {
   statusCode: number;
   message: string;
   data: T;
-  meta?: {
-    total?: number;
-    page?: number;
-    per_page?: number;
-    order: 'ASC' | 'DESC';
-  };
+  meta?: PaginationProps;
   href?: string;
 }
 

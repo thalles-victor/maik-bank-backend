@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, ValidationPipe } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { SequelizeModule } from '@nestjs/sequelize';
@@ -15,7 +15,7 @@ import { AccountModel } from './Domain/Entities/Account.entity';
 import { AccountModule } from './Modules/Account.module';
 import { TransactionAggregate } from './Domain/Aggregates/Transactions.aggregate';
 import { TransactionModule } from './Modules/Transaction.module';
-import { APP_GUARD } from '@nestjs/core';
+import { APP_GUARD, APP_PIPE } from '@nestjs/core';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { CustomThrottlerGuard } from './@shared/@guards/custom-throttler.guard';
@@ -74,6 +74,13 @@ import { CustomThrottlerGuard } from './@shared/@guards/custom-throttler.guard';
     {
       provide: APP_GUARD,
       useClass: CustomThrottlerGuard,
+    },
+    {
+      provide: APP_PIPE,
+      useValue: new ValidationPipe({
+        transform: true, // Transforma os parâmetros automaticamente
+        whitelist: true, // Remove campos não validados
+      }),
     },
     AppService,
   ],
