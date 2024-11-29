@@ -4,6 +4,7 @@ import { AccountController } from 'src/Infra/Http/Controllers/Account.controller
 import { UserModule } from './User.module';
 import { KEY_OF_INJECTION } from '@metadata';
 import { AccountSequelizeRepository } from 'src/Infra/Repositories/Sequelize/AccountSequelize.repository';
+import { AccountResolver } from 'src/Infra/Http/Graphql/Account.resolver';
 
 @Module({
   imports: [UserModule],
@@ -13,6 +14,9 @@ import { AccountSequelizeRepository } from 'src/Infra/Repositories/Sequelize/Acc
       provide: KEY_OF_INJECTION.ACCOUNT_REPOSITORY,
       useClass: AccountSequelizeRepository,
     },
+    AccountResolver,
+
+    // use cases
     CreateAccountUseCase,
   ],
 })
