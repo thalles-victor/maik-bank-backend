@@ -4,7 +4,7 @@ import { AppService } from './app.service';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { env } from '@utils';
 import { UserModel } from 'src/Domain/Entities';
-import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { ThrottlerModule } from '@nestjs/throttler';
 import { ThrottlerStorageRedisService } from '@nest-lab/throttler-storage-redis';
 import Redis from 'ioredis';
 import { AuthModule } from './Modules/Auth.module';
@@ -16,9 +16,18 @@ import { AccountModule } from './Modules/Account.module';
 import { TransactionAggregate } from './Domain/Aggregates/Transactions.aggregate';
 import { TransactionModule } from './Modules/Transaction.module';
 import { APP_GUARD } from '@nestjs/core';
+import { GraphQLModule } from '@nestjs/graphql';
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
+import { CustomThrottlerGuard } from './@shared/@guards/custom-throttler.guard';
 
 @Module({
   imports: [
+    GraphQLModule.forRoot<ApolloDriverConfig>({
+      driver: ApolloDriver,
+      autoSchemaFile: true,
+      context: ({ req, res }) => ({ req, res }),
+    }),
+
     ThrottlerModule.forRoot({
       throttlers: [
         {
@@ -53,6 +62,7 @@ import { APP_GUARD } from '@nestjs/core';
         ignoreExpiration: false,
       },
     }),
+
     RepositoryModule,
     AuthModule,
     UserModule,
@@ -63,7 +73,7 @@ import { APP_GUARD } from '@nestjs/core';
   providers: [
     {
       provide: APP_GUARD,
-      useClass: ThrottlerGuard,
+      useClass: CustomThrottlerGuard,
     },
     AppService,
   ],
