@@ -1,4 +1,5 @@
 import { UserModel } from '#models';
+import { TransactionAggregate } from 'src/Domain/Aggregates/Transactions.aggregate';
 
 export type PaginationProps = {
   page: number;
@@ -40,3 +41,8 @@ export type AuthResponse = {
   user: UserModel;
   access_token: string;
 };
+
+export interface TransactionUseCaseResult {
+  transaction: TransactionAggregate;
+  pdfVoucherUrl: string;
+}

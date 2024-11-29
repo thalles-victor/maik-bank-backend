@@ -6,24 +6,42 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { SelfDepositDto } from './SelfDeposit.dto';
-import { PayloadType, ThrowErrorMessage } from '@types';
+import {
+  PayloadType,
+  ThrowErrorMessage,
+  TransactionUseCaseResult,
+} from '@types';
 import { UserService } from 'src/Domain/Services/User.service';
-import { ACCOUNT_STATUS, KEY_OF_INJECTION } from '@metadata';
+import {
+  ACCOUNT_STATUS,
+  KEY_OF_INJECTION,
+  TransactionStatus,
+  TypeOfTransaction,
+} from '@metadata';
 import { IAccountRepositoryContact } from 'src/Domain/Interfaces/Repositories/IAccount.repository-contract';
 import { AccountUpdateModel } from 'src/Domain/Entities/Account.entity';
+import { ITransactionRepositoryContract } from 'src/Domain/Interfaces/Repositories/ITransaction.repository-contract';
+import { TransactionAggregate } from 'src/Domain/Aggregates/Transactions.aggregate';
+import { shortId } from '@utils';
+import { getTransactionVoucherUrl } from 'src/@shared/pdf/voucher';
 
 @Injectable()
 export class SelfDepositUseCase {
   constructor(
     @Inject(KEY_OF_INJECTION.ACCOUNT_REPOSITORY)
     private readonly accountRepository: IAccountRepositoryContact,
+    @Inject(KEY_OF_INJECTION.TRANSACTION_REPOSITORY)
+    private readonly transactionRepository: ITransactionRepositoryContract,
+
     private readonly userService: UserService,
   ) {}
 
-  async execute(auth: PayloadType, depositDto: SelfDepositDto) {
+  async execute(
+    auth: PayloadType,
+    depositDto: SelfDepositDto,
+  ): Promise<TransactionUseCaseResult> {
     const user = await this.userService.getBy({ id: auth.sub });
 
-    console.log(depositDto);
     if (!user) {
       throw new UnauthorizedException({
         ptBr: 'usuário não cadastrado',
@@ -57,14 +75,33 @@ export class SelfDepositUseCase {
     }
 
     const updateAccount = Object.assign(account.dataValues, {
-      balance: account.balance + depositDto.amount,
+      balance: account.balance + depositDto.value,
     } as AccountUpdateModel);
 
-    const accountUpdated = await this.accountRepository.update(
-      { id: account.id },
-      updateAccount,
+    await this.accountRepository.update({ id: account.id }, updateAccount);
+
+    const newTransaction = Object.assign(
+      new TransactionAggregate().dataValues,
+      {
+        id: shortId('timestamp'),
+        type: TypeOfTransaction.DEPOSIT,
+        value: depositDto.value,
+        accountTargetId: depositDto.accountId,
+        accountSenderId: null,
+        description: null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        status: TransactionStatus.COMPLETED,
+      },
     );
 
-    return accountUpdated;
+    console.log(newTransaction);
+
+    const transaction = await this.transactionRepository.create(newTransaction);
+
+    return {
+      transaction: transaction,
+      pdfVoucherUrl: getTransactionVoucherUrl(transaction.id),
+    };
   }
 }

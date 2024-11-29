@@ -13,7 +13,7 @@ export class SelfDepositDto {
   @IsPositive()
   @Min(5)
   @Max(10000)
-  amount: number;
+  value: number;
 
   @IsString()
   @IsNotEmpty()

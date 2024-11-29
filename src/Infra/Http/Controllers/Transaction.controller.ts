@@ -8,22 +8,26 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
-import { PayloadType, ThrowErrorMessage } from '@types';
+import {
+  PayloadType,
+  ThrowErrorMessage,
+  TransactionUseCaseResult,
+} from '@types';
 import { Response } from 'express';
 import { Payload } from 'src/@shared/@decorators/payload.decorator';
 import { JwtAuthGuard } from 'src/@shared/@guards/jwt-auth.guard';
 import { GetVoucherUseCase } from 'src/Application/UseCases/Transaction/GetVoucher/GetVoucher.usecase';
+import { SelfDepositDto } from 'src/Application/UseCases/Transaction/SelfDeposit/SelfDeposit.dto';
+import { SelfDepositUseCase } from 'src/Application/UseCases/Transaction/SelfDeposit/SelfDeposit.usecase';
 import { TransferDto } from 'src/Application/UseCases/Transaction/Transfer/Transfer.dto';
-import {
-  TransferUseCase,
-  TransferUseCaseResult,
-} from 'src/Application/UseCases/Transaction/Transfer/Transfer.usecase';
+import { TransferUseCase } from 'src/Application/UseCases/Transaction/Transfer/Transfer.usecase';
 
-@Controller({ path: 'movimentacoes', version: '1' })
+@Controller({ path: 'transaction', version: '1' })
 export class TransactionController {
   constructor(
     private readonly transferUseCase: TransferUseCase,
     private readonly getVoucherUseCase: GetVoucherUseCase,
+    private readonly selfDepositUseCase: SelfDepositUseCase,
   ) {}
 
   @Post('transferencia')
@@ -31,7 +35,7 @@ export class TransactionController {
   transfer(
     @Payload() payload: PayloadType,
     @Body() transferDto: TransferDto,
-  ): Promise<TransferUseCaseResult> {
+  ): Promise<TransactionUseCaseResult> {
     const result = this.transferUseCase.execute(payload, transferDto);
 
     return result;
@@ -52,5 +56,14 @@ export class TransactionController {
         enUs: 'internal server error',
       } as ThrowErrorMessage);
     });
+  }
+
+  @Post('/self-deposit')
+  @UseGuards(JwtAuthGuard)
+  selfDeposit(
+    @Payload() payload: PayloadType,
+    @Body() depositDto: SelfDepositDto,
+  ) {
+    return this.selfDepositUseCase.execute(payload, depositDto);
   }
 }

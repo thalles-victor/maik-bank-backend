@@ -14,17 +14,16 @@ import {
 } from '@nestjs/common';
 import { ITransactionRepositoryContract } from 'src/Domain/Interfaces/Repositories/ITransaction.repository-contract';
 import { TransferDto } from './Transfer.dto';
-import { PayloadType, ThrowErrorMessage } from '@types';
+import {
+  PayloadType,
+  ThrowErrorMessage,
+  TransactionUseCaseResult,
+} from '@types';
 import { IUserRepositoryContract } from 'src/Domain/Interfaces/Repositories/IUser.repository-contract';
 import { IAccountRepositoryContact } from 'src/Domain/Interfaces/Repositories/IAccount.repository-contract';
 import { TransactionAggregate } from 'src/Domain/Aggregates/Transactions.aggregate';
 import { shortId } from '@utils';
 import { getTransactionVoucherUrl } from 'src/@shared/pdf/voucher';
-
-export interface TransferUseCaseResult {
-  transaction: TransactionAggregate;
-  pdfVoucherUrl: string;
-}
 
 @Injectable()
 export class TransferUseCase {
@@ -40,7 +39,7 @@ export class TransferUseCase {
   async execute(
     auth: PayloadType,
     transferDto: TransferDto,
-  ): Promise<TransferUseCaseResult> {
+  ): Promise<TransactionUseCaseResult> {
     const user = await this.userRepository.getBy({ id: auth.sub });
 
     if (transferDto.senderId === transferDto.targetId) {
@@ -109,7 +108,7 @@ export class TransferUseCase {
     const newTransaction = Object.assign(
       new TransactionAggregate().dataValues,
       {
-        id: shortId('timestap'),
+        id: shortId('timestamp'),
         type: TypeOfTransaction.TRANSFER,
         value: transferDto.value,
         accountTargetId: transferDto.targetId,

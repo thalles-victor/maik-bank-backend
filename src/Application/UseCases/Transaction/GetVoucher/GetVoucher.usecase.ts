@@ -1,4 +1,4 @@
-import { KEY_OF_INJECTION } from '@metadata';
+import { KEY_OF_INJECTION, TypeOfTransaction } from '@metadata';
 import {
   Inject,
   Injectable,
@@ -6,6 +6,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { PayloadType, ThrowErrorMessage } from '@types';
+import { AccountModel } from 'src/Domain/Entities/Account.entity';
 import { IAccountRepositoryContact } from 'src/Domain/Interfaces/Repositories/IAccount.repository-contract';
 import { ITransactionRepositoryContract } from 'src/Domain/Interfaces/Repositories/ITransaction.repository-contract';
 import { IUserRepositoryContract } from 'src/Domain/Interfaces/Repositories/IUser.repository-contract';
@@ -44,9 +45,17 @@ export class GetVoucherUseCase {
       } as ThrowErrorMessage);
     }
 
-    const account = await this.accountRepository.getBy({
-      id: transaction.accountSenderId,
-    });
+    let account: AccountModel;
+
+    if (transaction.dataValues.type === TypeOfTransaction.TRANSFER) {
+      account = await this.accountRepository.getBy({
+        id: transaction.accountSenderId,
+      });
+    } else {
+      account = await this.accountRepository.getBy({
+        id: transaction.accountTargetId,
+      });
+    }
 
     if (!account) {
       throw new NotFoundException({
@@ -54,8 +63,6 @@ export class GetVoucherUseCase {
         enUs: 'account not found',
       } as ThrowErrorMessage);
     }
-
-    console.log(account.dataValues.userId);
 
     if (auth.sub !== account.dataValues.userId) {
       throw new NotFoundException({
