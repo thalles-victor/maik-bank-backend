@@ -1,3 +1,4 @@
+import { Field, InputType } from '@nestjs/graphql';
 import {
   IsEmail,
   IsNotEmpty,
@@ -6,16 +7,19 @@ import {
   Matches,
 } from 'class-validator';
 
+@InputType()
 export class AuthSignUpDto {
   @IsString()
   @IsNotEmpty()
   @Length(1, 70)
+  @Field(() => String)
   name: string;
 
   @IsString()
   @IsNotEmpty()
   @IsEmail()
   @Length(1, 70)
+  @Field(() => String)
   email: string;
 
   @IsString()
@@ -25,6 +29,7 @@ export class AuthSignUpDto {
     message:
       'A senha deve ter 8 carecteres, um especial um maúsculo e um número no mínimo',
   })
+  @Field(() => String)
   password: string;
 
   @IsString()
@@ -37,6 +42,7 @@ export class AuthSignUpDto {
         'O cpf ou cnpj deve estar nesse formato, cpf: 999.999.999-99, cnpj: 99.999.999/9999-99',
     },
   )
+  @Field(() => String)
   cpfCnpj: string;
 
   @IsString()
@@ -46,5 +52,6 @@ export class AuthSignUpDto {
     message:
       'A data de nascimento deve estar no formato da data deve ser dd/mm/aaaa',
   })
+  @Field(() => String)
   dateBirth: string;
 }

@@ -2,10 +2,13 @@ import { Column, Table, Model, DataType, HasMany } from 'sequelize-typescript';
 import { ROLE } from '@metadata';
 import { AccountModel } from './Account.entity';
 import { Exclude } from 'class-transformer';
+import { Field, HideField, ObjectType } from '@nestjs/graphql';
 
+@ObjectType()
 @Table({ tableName: 'Users' })
 export class UserModel extends Model {
   @Column({ primaryKey: true })
+  @Field(() => String)
   id: string;
 
   @Column({
@@ -15,6 +18,7 @@ export class UserModel extends Model {
       len: [1, 70],
     },
   })
+  @Field(() => String)
   name: string;
 
   @Column({
@@ -24,6 +28,7 @@ export class UserModel extends Model {
       len: [1, 70],
     },
   })
+  @Field(() => String)
   email: string;
 
   @Column({
@@ -34,6 +39,7 @@ export class UserModel extends Model {
     },
   })
   @Exclude()
+  @HideField()
   password: string;
 
   @Column({
@@ -44,6 +50,7 @@ export class UserModel extends Model {
     },
     defaultValue: null,
   })
+  @Field(() => String, { nullable: true })
   avatar?: string;
 
   @Column({
@@ -53,6 +60,7 @@ export class UserModel extends Model {
       len: [1, 10],
     },
   })
+  @Field(() => String)
   dateBirth: string;
 
   @Column({
@@ -63,18 +71,23 @@ export class UserModel extends Model {
     },
     defaultValue: ROLE.USER,
   })
+  @Field(() => String)
   role: ROLE;
 
   @Column({ type: DataType.BOOLEAN, defaultValue: false })
+  @Field(() => Boolean)
   isBanned: boolean;
 
   @Column({ type: DataType.BOOLEAN, defaultValue: false })
+  @Field(() => Boolean)
   isDeleted: boolean;
 
   @Column({ type: DataType.DATE })
+  @Field(() => String)
   createdAt: string;
 
   @Column({ type: DataType.DATE })
+  @Field(() => String)
   updatedAt: string;
 
   @HasMany(() => AccountModel)

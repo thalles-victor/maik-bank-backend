@@ -6,6 +6,7 @@ import { UserSequelizeRepository } from 'src/Infra/Repositories/Sequelize/UserSe
 import { AuthSignInUseCase } from 'src/Application/UseCases/Auth/Sign-in/SignIn.usecase';
 import { AuthCurrent } from 'src/Application/UseCases/Auth/Current/Current.usecase';
 import { UserModule } from './User.module';
+import { AuthResolver } from 'src/Infra/Http/Graphql/Auth.resolver';
 
 @Module({
   imports: [UserModule],
@@ -15,6 +16,7 @@ import { UserModule } from './User.module';
       provide: KEY_OF_INJECTION.USER_REPOSITORY,
       useClass: UserSequelizeRepository,
     },
+    AuthResolver,
     AuthSignUpUseCase,
     AuthSignInUseCase,
     AuthCurrent,
