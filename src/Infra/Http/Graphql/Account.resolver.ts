@@ -1,15 +1,23 @@
 import { UseGuards } from '@nestjs/common';
-import { Args, Mutation, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Resolver, Query } from '@nestjs/graphql';
 import { PayloadType } from '@types';
 import { Payload } from 'src/@shared/@decorators/payload.decorator';
 import { GqlJwtAuthGuard } from 'src/@shared/@guards/jwt-graphql.guard';
+import { PaginationDto } from 'src/@shared/@Pagination';
 import { CreateAccountDto } from 'src/Application/UseCases/Account/Create/CreateAccount.dto';
 import { CreateAccountUseCase } from 'src/Application/UseCases/Account/Create/CreateAccount.usecase';
-import { AccountObjectTypeResponse } from 'src/Domain/ObjectTypes/Account.object-type';
+import { GetManyAccountUseCase } from 'src/Application/UseCases/Account/GetMany/GetManyAccount.usecase';
+import {
+  AccountListObjectTypeResponse,
+  AccountObjectTypeResponse,
+} from 'src/Domain/ObjectTypes/Account.object-type';
 
 @Resolver()
 export class AccountResolver {
-  constructor(private readonly createAccountUseCase: CreateAccountUseCase) {}
+  constructor(
+    private readonly createAccountUseCase: CreateAccountUseCase,
+    private readonly getManyAccountByCurrent: GetManyAccountUseCase,
+  ) {}
 
   @Mutation(() => AccountObjectTypeResponse)
   @UseGuards(GqlJwtAuthGuard)
@@ -28,5 +36,24 @@ export class AccountResolver {
     };
   }
 
-  CRIAR MÉTODO PARA PEGAR OS DADOS DA CONTA
+  @Query(() => AccountListObjectTypeResponse)
+  @UseGuards(GqlJwtAuthGuard)
+  async getManyByCurrent(
+    @Payload() payload: PayloadType,
+    @Args('paginationDto') pagination: PaginationDto,
+  ): Promise<AccountListObjectTypeResponse> {
+    const { data, metadata } = await this.getManyAccountByCurrent.execute(
+      payload,
+      pagination,
+    );
+
+    return {
+      data: data,
+      message: 'success',
+      statusCode: 200,
+      meta: {
+        ...metadata,
+      },
+    };
+  }
 }

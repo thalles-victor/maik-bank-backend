@@ -84,8 +84,10 @@ export class AccountSequelizeRepository implements IAccountRepositoryContact {
 
   async getMany(
     pagination: PaginationProps,
+    where?: Partial<AccountModel>,
   ): Promise<GetWithPaginationResult<AccountModel[]>> {
     const { rows, count } = await this.accountModel.findAndCountAll({
+      where,
       limit: pagination.limit,
       offset: (pagination.page - 1) * pagination.limit,
       order: [['createdAt', pagination.order ?? 'DESC']],
