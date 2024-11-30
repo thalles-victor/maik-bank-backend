@@ -42,17 +42,17 @@ export class TransferUseCase {
   ): Promise<TransactionUseCaseResult> {
     const user = await this.userRepository.getBy({ id: auth.sub });
 
-    if (transferDto.senderId === transferDto.targetId) {
-      throw new NotAcceptableException({
-        ptBr: 'o remetente e destinatários são os mesmos',
-        enUs: 'senders and recipients are the same',
-      } as ThrowErrorMessage);
-    }
-
     if (!user) {
       throw new UnauthorizedException({
         ptBr: 'usuário não cadastrado',
         enUs: 'unregistered user',
+      } as ThrowErrorMessage);
+    }
+
+    if (transferDto.senderId === transferDto.targetId) {
+      throw new NotAcceptableException({
+        ptBr: 'o remetente e destinatários são os mesmos',
+        enUs: 'senders and recipients are the same',
       } as ThrowErrorMessage);
     }
 
