@@ -1,3 +1,4 @@
+import { ROLE } from '@metadata';
 import {
   Body,
   Controller,
@@ -17,7 +18,9 @@ import {
 } from '@types';
 import { Response } from 'express';
 import { Payload } from 'src/@shared/@decorators/payload.decorator';
+import { RolesDecorator } from 'src/@shared/@decorators/role.decorator';
 import { JwtAuthGuard } from 'src/@shared/@guards/jwt-auth.guard';
+import { RoleGuard } from 'src/@shared/@guards/role.guard';
 import { PaginationDto } from 'src/@shared/@Pagination';
 import { GetVoucherUseCase } from 'src/Application/UseCases/Transaction/GetVoucher/GetVoucher.usecase';
 import { SelfDepositDto } from 'src/Application/UseCases/Transaction/SelfDeposit/SelfDeposit.dto';
@@ -42,8 +45,9 @@ export class TransactionController {
     private readonly drawlUseCase: WithdrawalUseCase,
   ) {}
 
-  @Post('transferencia')
-  @UseGuards(JwtAuthGuard)
+  @Post('transfer')
+  @UseGuards(JwtAuthGuard, RoleGuard)
+  @RolesDecorator(ROLE.ADMIN, ROLE.USER)
   transfer(
     @Payload() payload: PayloadType,
     @Body() transferDto: TransferDto,
@@ -54,7 +58,8 @@ export class TransactionController {
   }
 
   @Get('voucher/:id')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RoleGuard)
+  @RolesDecorator(ROLE.ADMIN, ROLE.USER)
   async getVoucher(
     @Payload() payload: PayloadType,
     @Param('id') id: string,
@@ -71,7 +76,8 @@ export class TransactionController {
   }
 
   @Post('/self-deposit')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RoleGuard)
+  @RolesDecorator(ROLE.ADMIN, ROLE.USER)
   selfDeposit(
     @Payload() payload: PayloadType,
     @Body() depositDto: SelfDepositDto,
@@ -80,7 +86,8 @@ export class TransactionController {
   }
 
   @Post('/drawl')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RoleGuard)
+  @RolesDecorator(ROLE.USER, ROLE.ADMIN)
   async drawl(
     @Payload() payload: PayloadType,
     @Body() drawlDto: DrawlDto,
@@ -99,6 +106,8 @@ export class TransactionController {
   }
 
   @Get('many')
+  @UseGuards(JwtAuthGuard, RoleGuard)
+  @RolesDecorator(ROLE.ADMIN)
   async getManyTransactions(@Query() pagination: PaginationDto) {
     const transactions = await this.transactionsService.getMany(pagination);
 

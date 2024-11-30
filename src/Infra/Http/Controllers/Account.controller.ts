@@ -1,7 +1,10 @@
+import { ROLE } from '@metadata';
 import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
 import { ApiResponse, PayloadType } from '@types';
 import { Payload } from 'src/@shared/@decorators/payload.decorator';
+import { RolesDecorator } from 'src/@shared/@decorators/role.decorator';
 import { JwtAuthGuard } from 'src/@shared/@guards/jwt-auth.guard';
+import { RoleGuard } from 'src/@shared/@guards/role.guard';
 import { PaginationDto } from 'src/@shared/@Pagination';
 import { CreateAccountDto } from 'src/Application/UseCases/Account/Create/CreateAccount.dto';
 import { CreateAccountUseCase } from 'src/Application/UseCases/Account/Create/CreateAccount.usecase';
@@ -16,7 +19,8 @@ export class AccountController {
   ) {}
 
   @Post()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RoleGuard)
+  @RolesDecorator(ROLE.ADMIN, ROLE.USER)
   create(
     @Payload() payload: PayloadType,
     @Body() accountDto: CreateAccountDto,
@@ -25,7 +29,8 @@ export class AccountController {
   }
 
   @Get('many')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RoleGuard)
+  @RolesDecorator(ROLE.ADMIN, ROLE.USER)
   async getManyByCurrent(
     @Payload() payload: PayloadType,
     @Query() pagination: PaginationDto,
