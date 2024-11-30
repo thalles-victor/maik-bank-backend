@@ -10,6 +10,7 @@ import { UserSequelizeRepository } from 'src/Infra/Repositories/Sequelize/UserSe
 import { GetAccountInformationUseCase } from 'src/Application/UseCases/Account/Informations/Informations.usecase';
 import { TransactionSequelizeRepository } from 'src/Infra/Repositories/Sequelize/TransactionSequelize.repository';
 import { UpdateAccountUseCase } from 'src/Application/UseCases/Account/UpdateStatus/UpdateAccount.usecase';
+import { SoftDeleteAccountUseCase } from 'src/Application/UseCases/Account/SoftDelete/SoftDeleteAccount.usecase';
 
 @Module({
   imports: [UserModule],
@@ -34,6 +35,7 @@ import { UpdateAccountUseCase } from 'src/Application/UseCases/Account/UpdateSta
     GetManyAccountUseCase,
     GetAccountInformationUseCase,
     UpdateAccountUseCase,
+    SoftDeleteAccountUseCase,
   ],
 })
 export class AccountModule {}
