@@ -71,6 +71,7 @@ export class AccountController {
       },
     };
   }
+
   @Get('/:id')
   @UseGuards(JwtAuthGuard, RoleGuard)
   @RolesDecorator(ROLE.ADMIN, ROLE.USER)
