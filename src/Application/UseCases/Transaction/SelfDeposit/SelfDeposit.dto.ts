@@ -5,8 +5,6 @@ import {
   IsPositive,
   IsString,
   Min,
-  Max,
-  Length,
 } from 'class-validator';
 
 @InputType()
@@ -14,13 +12,13 @@ export class SelfDepositDto {
   @Field(() => Number)
   @IsNumber()
   @IsPositive()
-  @Min(5)
-  @Max(10000)
+  @Min(1)
+  // @Max(10000)
   value: number;
 
   @Field(() => String)
   @IsString()
   @IsNotEmpty()
-  @Length(0, 15)
+  // @Length(0, 15)
   accountId: string;
 }

@@ -74,12 +74,6 @@ export class SelfDepositUseCase {
       });
     }
 
-    const updateAccount = Object.assign(account.dataValues, {
-      balance: account.balance + depositDto.value,
-    } as AccountUpdateModel);
-
-    await this.accountRepository.update({ id: account.id }, updateAccount);
-
     const newTransaction = Object.assign(
       new TransactionAggregate().dataValues,
       {
@@ -91,17 +85,57 @@ export class SelfDepositUseCase {
         description: null,
         createdAt: new Date(),
         updatedAt: new Date(),
-        status: TransactionStatus.COMPLETED,
+        status: TransactionStatus.PENDING,
       },
     );
 
-    console.log(newTransaction);
-
     const transaction = await this.transactionRepository.create(newTransaction);
 
-    return {
-      transaction: transaction,
-      pdfVoucherUrl: getTransactionVoucherUrl(transaction.id),
-    };
+    try {
+      const newBalance = account.balance + depositDto.value;
+
+      const updateAccount = Object.assign(account.dataValues, {
+        balance: newBalance,
+        updatedAt: new Date(),
+      } as AccountUpdateModel);
+
+      const accountUpdated = (
+        await this.accountRepository.update({ id: account.id }, updateAccount)
+      ).dataValues;
+
+      if (accountUpdated.balance !== newBalance) {
+        throw new Error();
+      }
+
+      const successTransaction = await this.transactionRepository.update(
+        {
+          id: transaction.id,
+        },
+        {
+          status: TransactionStatus.COMPLETED,
+          updatedAt: new Date(),
+        },
+      );
+
+      return {
+        transaction: successTransaction,
+        pdfVoucherUrl: getTransactionVoucherUrl(transaction.id),
+      };
+    } catch {
+      const errorTransaction = await this.transactionRepository.update(
+        {
+          id: transaction.id,
+        },
+        {
+          status: TransactionStatus.CANCELLED,
+          updatedAt: new Date(),
+        },
+      );
+
+      return {
+        transaction: errorTransaction,
+        pdfVoucherUrl: getTransactionVoucherUrl(transaction.id),
+      };
+    }
   }
 }
