@@ -4,6 +4,7 @@ import {
   Controller,
   Get,
   Param,
+  Patch,
   Post,
   Query,
   UseGuards,
@@ -18,6 +19,8 @@ import { CreateAccountDto } from 'src/Application/UseCases/Account/Create/Create
 import { CreateAccountUseCase } from 'src/Application/UseCases/Account/Create/CreateAccount.usecase';
 import { GetManyAccountUseCase } from 'src/Application/UseCases/Account/GetMany/GetManyAccount.usecase';
 import { GetAccountInformationUseCase } from 'src/Application/UseCases/Account/Informations/Informations.usecase';
+import { UpdateAccountDto } from 'src/Application/UseCases/Account/UpdateStatus/UpdateAccount.dto';
+import { UpdateAccountUseCase } from 'src/Application/UseCases/Account/UpdateStatus/UpdateAccount.usecase';
 import { AccountModel } from 'src/Domain/Entities/Account.entity';
 
 @Controller({ path: 'account', version: '1' })
@@ -26,6 +29,7 @@ export class AccountController {
     private readonly createAccountUseCase: CreateAccountUseCase,
     private readonly getManyAccountByCurrent: GetManyAccountUseCase,
     private readonly getAccountInformation: GetAccountInformationUseCase,
+    private readonly updateAccountUseCase: UpdateAccountUseCase,
   ) {}
 
   @Post()
@@ -73,5 +77,26 @@ export class AccountController {
       accountId: id,
       transactionPagination,
     });
+  }
+
+  @Patch('/:id')
+  @UseGuards(JwtAuthGuard, RoleGuard)
+  @RolesDecorator(ROLE.ADMIN, ROLE.USER)
+  async updateAccount(
+    @Payload() payload: PayloadType,
+    @Body() accountDto: UpdateAccountDto,
+    @Param('id') id: string,
+  ): Promise<ApiResponse<AccountModel>> {
+    const result = await this.updateAccountUseCase.execute(
+      payload,
+      accountDto,
+      id,
+    );
+
+    return {
+      data: result,
+      message: 'updated successfully',
+      statusCode: 200,
+    };
   }
 }

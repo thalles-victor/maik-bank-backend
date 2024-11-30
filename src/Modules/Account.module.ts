@@ -9,6 +9,7 @@ import { GetManyAccountUseCase } from 'src/Application/UseCases/Account/GetMany/
 import { UserSequelizeRepository } from 'src/Infra/Repositories/Sequelize/UserSequelize.repository';
 import { GetAccountInformationUseCase } from 'src/Application/UseCases/Account/Informations/Informations.usecase';
 import { TransactionSequelizeRepository } from 'src/Infra/Repositories/Sequelize/TransactionSequelize.repository';
+import { UpdateAccountUseCase } from 'src/Application/UseCases/Account/UpdateStatus/UpdateAccount.usecase';
 
 @Module({
   imports: [UserModule],
@@ -32,6 +33,7 @@ import { TransactionSequelizeRepository } from 'src/Infra/Repositories/Sequelize
     CreateAccountUseCase,
     GetManyAccountUseCase,
     GetAccountInformationUseCase,
+    UpdateAccountUseCase,
   ],
 })
 export class AccountModule {}
