@@ -51,8 +51,7 @@ export class GetAccountInformationUseCase {
       } as ThrowErrorMessage);
     }
 
-    const account = (await this.accountRepository.getBy({ id: accountId }))
-      .dataValues;
+    const account = await this.accountRepository.getBy({ id: accountId });
 
     if (!account || account.userId !== payload.sub) {
       throw new NotFoundException({
@@ -71,7 +70,7 @@ export class GetAccountInformationUseCase {
     });
 
     return {
-      account,
+      account: account.dataValues,
       transactions: {
         data,
         metadata,
