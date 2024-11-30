@@ -5,6 +5,7 @@ import {
   InternalServerErrorException,
   Param,
   Post,
+  Query,
   Res,
   UseGuards,
 } from '@nestjs/common';
@@ -17,6 +18,7 @@ import {
 import { Response } from 'express';
 import { Payload } from 'src/@shared/@decorators/payload.decorator';
 import { JwtAuthGuard } from 'src/@shared/@guards/jwt-auth.guard';
+import { PaginationDto } from 'src/@shared/@Pagination';
 import { GetVoucherUseCase } from 'src/Application/UseCases/Transaction/GetVoucher/GetVoucher.usecase';
 import { SelfDepositDto } from 'src/Application/UseCases/Transaction/SelfDeposit/SelfDeposit.dto';
 import { SelfDepositUseCase } from 'src/Application/UseCases/Transaction/SelfDeposit/SelfDeposit.usecase';
@@ -24,11 +26,16 @@ import { TransferDto } from 'src/Application/UseCases/Transaction/Transfer/Trans
 import { TransferUseCase } from 'src/Application/UseCases/Transaction/Transfer/Transfer.usecase';
 import { DrawlDto } from 'src/Application/UseCases/Transaction/WithDrawl/Drawl.dto';
 import { WithdrawalUseCase } from 'src/Application/UseCases/Transaction/WithDrawl/Drawl.usecase';
+import { TransactionService } from 'src/Domain/Services/Transaction.service';
 import { TransactionModule } from 'src/Modules/Transaction.module';
 
 @Controller({ path: 'transaction', version: '1' })
 export class TransactionController {
   constructor(
+    // Services
+    private readonly transactionsService: TransactionService,
+
+    //Use Cases
     private readonly transferUseCase: TransferUseCase,
     private readonly getVoucherUseCase: GetVoucherUseCase,
     private readonly selfDepositUseCase: SelfDepositUseCase,
@@ -89,5 +96,12 @@ export class TransactionController {
       statusCode: 200,
       href: pdfVoucherUrl,
     };
+  }
+
+  @Get('many')
+  async getManyTransactions(@Query() pagination: PaginationDto) {
+    const transactions = await this.transactionsService.getMany(pagination);
+
+    return transactions;
   }
 }

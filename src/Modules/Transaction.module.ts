@@ -11,6 +11,7 @@ import { UserSequelizeRepository } from 'src/Infra/Repositories/Sequelize/UserSe
 import { UserModule } from './User.module';
 import { TransactionResolver } from 'src/Infra/Http/Graphql/Transaction.resolver';
 import { WithdrawalUseCase } from 'src/Application/UseCases/Transaction/WithDrawl/Drawl.usecase';
+import { TransactionService } from 'src/Domain/Services/Transaction.service';
 
 @Module({
   imports: [UserModule],
@@ -29,7 +30,10 @@ import { WithdrawalUseCase } from 'src/Application/UseCases/Transaction/WithDraw
       useClass: AccountSequelizeRepository,
     },
     TransactionResolver,
+
+    // services
     PdfService,
+    TransactionService,
 
     // use cases
     TransferUseCase,

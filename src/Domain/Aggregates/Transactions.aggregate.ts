@@ -9,6 +9,7 @@ import {
 import { AccountModel } from '../Entities/Account.entity';
 import { TransactionStatus, TypeOfTransaction } from '@metadata';
 import { Field, HideField, ObjectType } from '@nestjs/graphql';
+import { Expose } from 'class-transformer';
 
 @ObjectType()
 @Table({ tableName: 'Transactions' })
@@ -100,3 +101,28 @@ export type TransactionUpdateAggregate =
   | Pick<TransactionAggregate, 'updatedAt'>;
 
 export type TransactionAggregateUnqRef = Pick<TransactionAggregate, 'id'>;
+
+export class TransactionWhereCondition {
+  @Expose()
+  id: string;
+  @Expose()
+  type: TypeOfTransaction;
+  @Expose()
+  value: number;
+  @Expose()
+  accountTargetId: string;
+  @Expose()
+  accountSenderId: string;
+  @Expose()
+  description: string;
+  @Expose()
+  createdAt: Date;
+  @Expose()
+  updatedAt: Date;
+  @Expose()
+  status: TransactionStatus;
+  @Expose()
+  accountTarget: AccountModel;
+  @Expose()
+  accountSender: AccountModel;
+}

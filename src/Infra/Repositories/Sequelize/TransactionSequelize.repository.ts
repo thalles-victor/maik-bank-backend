@@ -1,18 +1,20 @@
 import { InjectModel } from '@nestjs/sequelize';
 import { InternalServerErrorException } from '@nestjs/common';
 import { Sequelize } from 'sequelize-typescript';
+import { Op } from 'sequelize';
 
 import { PaginationProps, GetWithPaginationResult } from '@types';
 import {
   TransactionAggregate,
   TransactionAggregateUnqRef,
   TransactionUpdateAggregate,
+  TransactionWhereCondition,
 } from 'src/Domain/Aggregates/Transactions.aggregate';
 import {
   ITransactionRepositoryContract,
   TransferProps,
 } from 'src/Domain/Interfaces/Repositories/ITransaction.repository-contract';
-import { splitKeyAndValue } from 'src/@shared/@utils/tools';
+import { getWhereConditions, splitKeyAndValue } from 'src/@shared/@utils/tools';
 import { AccountModel } from 'src/Domain/Entities/Account.entity';
 import { AccountModule } from 'src/Modules/Account.module';
 import { env } from '@utils';
@@ -120,10 +122,18 @@ export class TransactionSequelizeRepository
   async getMany(
     pagination: PaginationProps,
   ): Promise<GetWithPaginationResult<TransactionAggregate[]>> {
+    const filters = pagination.filters;
+
+    const whereConditions = getWhereConditions(
+      filters,
+      TransactionWhereCondition,
+    );
+
     const { rows, count } = await this.transactionModel.findAndCountAll({
       limit: pagination.limit,
       offset: (pagination.page - 1) * pagination.limit,
       order: [['createdAt', pagination.order ?? 'DESC']],
+      where: whereConditions ? { [Op.and]: whereConditions } : undefined,
     });
 
     return {
