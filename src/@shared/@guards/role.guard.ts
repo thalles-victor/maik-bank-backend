@@ -2,10 +2,12 @@ import { ROLE } from '@metadata';
 import {
   CanActivate,
   ExecutionContext,
+  ForbiddenException,
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
+import { ThrowErrorMessage } from '@types';
 
 @Injectable()
 export class RoleGuard implements CanActivate {
@@ -28,6 +30,14 @@ export class RoleGuard implements CanActivate {
     }
 
     const isValidRole = this.matchRoles(roles, jwtPayload.roles);
+
+    if (!isValidRole) {
+      throw new ForbiddenException({
+        ptBr: `Somente ${roles.toString()} tem permissão para acessar esse método`,
+        enUs: `Only ${roles.toString()} can be access this method`,
+        statusCode: 403,
+      } as ThrowErrorMessage);
+    }
 
     return isValidRole;
   }

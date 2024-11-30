@@ -30,7 +30,7 @@ export class AccountController {
 
   @Get('many')
   @UseGuards(JwtAuthGuard, RoleGuard)
-  @RolesDecorator(ROLE.ADMIN, ROLE.USER)
+  @RolesDecorator(ROLE.ADMIN)
   async getManyByCurrent(
     @Payload() payload: PayloadType,
     @Query() pagination: PaginationDto,
