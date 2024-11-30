@@ -9,6 +9,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import {
+  ApiResponse,
   PayloadType,
   ThrowErrorMessage,
   TransactionUseCaseResult,
@@ -21,6 +22,9 @@ import { SelfDepositDto } from 'src/Application/UseCases/Transaction/SelfDeposit
 import { SelfDepositUseCase } from 'src/Application/UseCases/Transaction/SelfDeposit/SelfDeposit.usecase';
 import { TransferDto } from 'src/Application/UseCases/Transaction/Transfer/Transfer.dto';
 import { TransferUseCase } from 'src/Application/UseCases/Transaction/Transfer/Transfer.usecase';
+import { DrawlDto } from 'src/Application/UseCases/Transaction/WithDrawl/Drawl.dto';
+import { WithdrawalUseCase } from 'src/Application/UseCases/Transaction/WithDrawl/Drawl.usecase';
+import { TransactionModule } from 'src/Modules/Transaction.module';
 
 @Controller({ path: 'transaction', version: '1' })
 export class TransactionController {
@@ -28,6 +32,7 @@ export class TransactionController {
     private readonly transferUseCase: TransferUseCase,
     private readonly getVoucherUseCase: GetVoucherUseCase,
     private readonly selfDepositUseCase: SelfDepositUseCase,
+    private readonly drawlUseCase: WithdrawalUseCase,
   ) {}
 
   @Post('transferencia')
@@ -65,5 +70,24 @@ export class TransactionController {
     @Body() depositDto: SelfDepositDto,
   ) {
     return this.selfDepositUseCase.execute(payload, depositDto);
+  }
+
+  @Post('/drawl')
+  @UseGuards(JwtAuthGuard)
+  async drawl(
+    @Payload() payload: PayloadType,
+    @Body() drawlDto: DrawlDto,
+  ): Promise<ApiResponse<TransactionModule>> {
+    const { transaction, pdfVoucherUrl } = await this.drawlUseCase.execute(
+      payload,
+      drawlDto,
+    );
+
+    return {
+      data: transaction,
+      message: 'success',
+      statusCode: 200,
+      href: pdfVoucherUrl,
+    };
   }
 }

@@ -10,6 +10,7 @@ import { TransactionSequelizeRepository } from 'src/Infra/Repositories/Sequelize
 import { UserSequelizeRepository } from 'src/Infra/Repositories/Sequelize/UserSequelize.repository';
 import { UserModule } from './User.module';
 import { TransactionResolver } from 'src/Infra/Http/Graphql/Transaction.resolver';
+import { WithdrawalUseCase } from 'src/Application/UseCases/Transaction/WithDrawl/Drawl.usecase';
 
 @Module({
   imports: [UserModule],
@@ -34,6 +35,7 @@ import { TransactionResolver } from 'src/Infra/Http/Graphql/Transaction.resolver
     TransferUseCase,
     GetVoucherUseCase,
     SelfDepositUseCase,
+    WithdrawalUseCase,
   ],
 })
 export class TransactionModule {}

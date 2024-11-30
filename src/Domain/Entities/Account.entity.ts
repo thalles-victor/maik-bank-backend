@@ -70,6 +70,7 @@ export type AccountUpdateModel =
   | Pick<AccountModel, 'name'>
   | Pick<AccountModel, 'balance'>
   | Pick<AccountModel, 'status'>
+  | Pick<AccountModel, 'updatedAt'>
   | Pick<AccountModel, 'isDeleted'>;
 
 export type AccountModelUniqRef = Pick<AccountModel, 'id'>;
