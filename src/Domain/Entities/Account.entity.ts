@@ -9,14 +9,17 @@ import {
 import { ACCOUNT_STATUS } from '@metadata';
 import { UserModel } from './User.model';
 import { Field, HideField, ObjectType } from '@nestjs/graphql';
+import { Expose } from 'class-transformer';
 
 @ObjectType()
 @Table({ tableName: 'Accounts' })
 export class AccountModel extends Model {
+  @Expose()
   @Column({ primaryKey: true })
   @Field(() => String)
   id: string;
 
+  @Expose()
   @Column({
     type: DataType.STRING(70),
     allowNull: false,
@@ -27,6 +30,7 @@ export class AccountModel extends Model {
   @Field(() => String)
   name: string;
 
+  @Expose()
   @Column({
     type: DataType.NUMBER(),
     defaultValue: 0,
@@ -34,6 +38,7 @@ export class AccountModel extends Model {
   @Field(() => Number)
   balance: number;
 
+  @Expose()
   @Column({
     type: DataType.STRING(10),
     allowNull: false,
@@ -45,18 +50,22 @@ export class AccountModel extends Model {
   @Field(() => String)
   status: ACCOUNT_STATUS;
 
+  @Expose()
   @Column({ type: DataType.BOOLEAN, defaultValue: false })
   @Field(() => Boolean)
   isDeleted: boolean;
 
+  @Expose()
   @Column({ type: DataType.DATE })
   @Field(() => String)
   createdAt: Date;
 
+  @Expose()
   @Column({ type: DataType.DATE })
   @Field(() => String)
   updatedAt: Date;
 
+  @Expose()
   @ForeignKey(() => UserModel)
   @Field(() => String)
   userId: string;

@@ -6,8 +6,9 @@ import {
 import { PaginationProps, GetWithPaginationResult } from '@types';
 import { IAccountRepositoryContact } from 'src/Domain/Interfaces/Repositories/IAccount.repository-contract';
 import { InjectModel } from '@nestjs/sequelize';
-import { splitKeyAndValue } from 'src/@shared/@utils/tools';
+import { getWhereConditions, splitKeyAndValue } from 'src/@shared/@utils/tools';
 import { InternalServerErrorException } from '@nestjs/common';
+import { Op } from 'sequelize';
 
 export class AccountSequelizeRepository implements IAccountRepositoryContact {
   constructor(
@@ -84,13 +85,16 @@ export class AccountSequelizeRepository implements IAccountRepositoryContact {
 
   async getMany(
     pagination: PaginationProps,
-    where?: Partial<AccountModel>,
   ): Promise<GetWithPaginationResult<AccountModel[]>> {
+    const filters = pagination.filters;
+
+    const whereConditions = getWhereConditions(filters, AccountModel);
+
     const { rows, count } = await this.accountModel.findAndCountAll({
-      where,
       limit: pagination.limit,
       offset: (pagination.page - 1) * pagination.limit,
       order: [['createdAt', pagination.order ?? 'DESC']],
+      where: whereConditions ? { [Op.and]: whereConditions } : undefined,
     });
 
     return {
