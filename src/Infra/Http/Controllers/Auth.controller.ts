@@ -26,7 +26,7 @@ export class AuthController {
     private readonly currentUseCase: AuthCurrent,
   ) {}
 
-  @Post('/clientes')
+  @Post('/signUp')
   @HttpCode(201)
   async signUp(
     @Body() userDto: AuthSignUpDto,

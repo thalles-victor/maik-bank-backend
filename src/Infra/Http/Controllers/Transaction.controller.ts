@@ -75,7 +75,7 @@ export class TransactionController {
     });
   }
 
-  @Post('/self-deposit')
+  @Post('self-deposit')
   @UseGuards(JwtAuthGuard, RoleGuard)
   @RolesDecorator(ROLE.ADMIN, ROLE.USER)
   selfDeposit(
