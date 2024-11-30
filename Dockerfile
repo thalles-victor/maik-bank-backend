@@ -7,9 +7,13 @@ COPY package*.json ./
 RUN npm install
 
 COPY . .
-
 RUN npm run build
+
+COPY entrypoint.sh /usr/src/app/entrypoint.sh
+RUN chmod +x /usr/src/app/entrypoint.sh
+
+
 
 EXPOSE 3000
 
-CMD ["npm", "run", "start:prod"]
+ENTRYPOINT ["/usr/src/app/entrypoint.sh"]
