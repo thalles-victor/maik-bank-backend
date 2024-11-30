@@ -6,7 +6,7 @@ export interface IBaseRepositoryContract<Model, UpdateModel, ModelUniqueRefs> {
   update(unqRef: ModelUniqueRefs, updModel: UpdateModel): Promise<Model>;
   delete(unqRef: ModelUniqueRefs): Promise<'success' | 'fail'>;
   softDelete(unqRef: ModelUniqueRefs): Promise<'success' | 'fail'>;
-  getAll(): Promise<Model[]>;
+  getAll(where?: Partial<Model>): Promise<Model[]>;
   getMany(
     pagination: PaginationProps,
     where?: Partial<Model>,

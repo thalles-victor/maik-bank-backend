@@ -105,7 +105,7 @@ export class TransactionController {
     };
   }
 
-  @Get('many')
+  @Get('admin/many')
   @UseGuards(JwtAuthGuard, RoleGuard)
   @RolesDecorator(ROLE.ADMIN)
   async getManyTransactions(@Query() pagination: PaginationDto) {

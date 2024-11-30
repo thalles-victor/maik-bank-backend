@@ -79,8 +79,10 @@ export class AccountSequelizeRepository implements IAccountRepositoryContact {
     }
   }
 
-  getAll(): Promise<AccountModel[]> {
-    return this.accountModel.findAll();
+  getAll(where?: Partial<AccountModel>): Promise<AccountModel[]> {
+    return this.accountModel.findAll({
+      where: where,
+    });
   }
 
   async getMany(

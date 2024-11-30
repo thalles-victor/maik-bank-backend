@@ -7,6 +7,8 @@ import { AccountSequelizeRepository } from 'src/Infra/Repositories/Sequelize/Acc
 import { AccountResolver } from 'src/Infra/Http/Graphql/Account.resolver';
 import { GetManyAccountUseCase } from 'src/Application/UseCases/Account/GetMany/GetManyAccount.usecase';
 import { UserSequelizeRepository } from 'src/Infra/Repositories/Sequelize/UserSequelize.repository';
+import { GetAccountInformationUseCase } from 'src/Application/UseCases/Account/Informations/Informations.usecase';
+import { TransactionSequelizeRepository } from 'src/Infra/Repositories/Sequelize/TransactionSequelize.repository';
 
 @Module({
   imports: [UserModule],
@@ -20,11 +22,16 @@ import { UserSequelizeRepository } from 'src/Infra/Repositories/Sequelize/UserSe
       provide: KEY_OF_INJECTION.USER_REPOSITORY,
       useClass: UserSequelizeRepository,
     },
+    {
+      provide: KEY_OF_INJECTION.TRANSACTION_REPOSITORY,
+      useClass: TransactionSequelizeRepository,
+    },
     AccountResolver,
 
     // use cases
     CreateAccountUseCase,
     GetManyAccountUseCase,
+    GetAccountInformationUseCase,
   ],
 })
 export class AccountModule {}
