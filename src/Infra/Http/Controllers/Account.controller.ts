@@ -19,7 +19,10 @@ import { PaginationDto } from 'src/@shared/@Pagination';
 import { CreateAccountDto } from 'src/Application/UseCases/Account/Create/CreateAccount.dto';
 import { CreateAccountUseCase } from 'src/Application/UseCases/Account/Create/CreateAccount.usecase';
 import { GetManyAccountUseCase } from 'src/Application/UseCases/Account/GetMany/GetManyAccount.usecase';
-import { GetAccountInformationUseCase } from 'src/Application/UseCases/Account/Informations/Informations.usecase';
+import {
+  GetAccountInformationUseCase,
+  GetAccountInformationUseCaseResult,
+} from 'src/Application/UseCases/Account/Informations/Informations.usecase';
 import { SoftDeleteAccountUseCase } from 'src/Application/UseCases/Account/SoftDelete/SoftDeleteAccount.usecase';
 import { UpdateAccountDto } from 'src/Application/UseCases/Account/UpdateStatus/UpdateAccount.dto';
 import { UpdateAccountUseCase } from 'src/Application/UseCases/Account/UpdateStatus/UpdateAccount.usecase';
@@ -71,15 +74,21 @@ export class AccountController {
   @Get('/:id')
   @UseGuards(JwtAuthGuard, RoleGuard)
   @RolesDecorator(ROLE.ADMIN, ROLE.USER)
-  getInformation(
+  async getInformation(
     @Payload() payload: PayloadType,
     @Param('id') id: string,
     @Query() transactionPagination: PaginationDto,
-  ) {
-    return this.getAccountInformation.execute(payload, {
+  ): Promise<ApiResponse<GetAccountInformationUseCaseResult>> {
+    const result = await this.getAccountInformation.execute(payload, {
       accountId: id,
       transactionPagination,
     });
+
+    return {
+      data: result,
+      message: 'search successfully',
+      statusCode: 200,
+    };
   }
 
   @Patch('/:id')
