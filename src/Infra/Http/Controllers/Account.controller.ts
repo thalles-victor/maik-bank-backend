@@ -19,6 +19,7 @@ import { PaginationDto } from 'src/@shared/@Pagination';
 import { CreateAccountDto } from 'src/Application/UseCases/Account/Create/CreateAccount.dto';
 import { CreateAccountUseCase } from 'src/Application/UseCases/Account/Create/CreateAccount.usecase';
 import { GetManyAccountUseCase } from 'src/Application/UseCases/Account/GetMany/GetManyAccount.usecase';
+import { GetSelfAccountsUseCase } from 'src/Application/UseCases/Account/GetSelfAccounts/GetSelfAccounts.usecase';
 import {
   GetAccountInformationUseCase,
   GetAccountInformationUseCaseResult,
@@ -36,7 +37,28 @@ export class AccountController {
     private readonly getAccountInformation: GetAccountInformationUseCase,
     private readonly updateAccountUseCase: UpdateAccountUseCase,
     private readonly softDeleteAccountUseCase: SoftDeleteAccountUseCase,
+    private readonly getSelfAccountsUseCase: GetSelfAccountsUseCase,
   ) {}
+
+  @Get('many')
+  @UseGuards(JwtAuthGuard, RoleGuard)
+  @RolesDecorator(ROLE.ADMIN, ROLE.USER)
+  async getSelfAccount(
+    @Payload() payload: PayloadType,
+    @Query() pagination: PaginationDto,
+  ): Promise<ApiResponse<AccountModel[]>> {
+    const { data, metadata } = await this.getSelfAccountsUseCase.execute(
+      payload,
+      pagination,
+    );
+
+    return {
+      data: data,
+      message: 'success',
+      statusCode: 200,
+      meta: metadata,
+    };
+  }
 
   @Post()
   @UseGuards(JwtAuthGuard, RoleGuard)
@@ -65,6 +87,22 @@ export class AccountController {
         limit: metadata.limit,
         order: metadata.order,
       },
+    };
+  }
+
+  @Delete('admin/soft-delete/:id')
+  @UseGuards(JwtAuthGuard, RoleGuard)
+  @RolesDecorator(ROLE.ADMIN)
+  async softDeleteAccount(
+    @Payload() payload: PayloadType,
+    @Param('id') id: string,
+  ): Promise<ApiResponse<AccountModel>> {
+    const result = await this.softDeleteAccountUseCase.execute(payload, id);
+
+    return {
+      data: result,
+      message: 'successfully deleted',
+      statusCode: 200,
     };
   }
 
@@ -105,22 +143,6 @@ export class AccountController {
     return {
       data: result,
       message: 'updated successfully',
-      statusCode: 200,
-    };
-  }
-
-  @Delete('admin/soft-delete/:id')
-  @UseGuards(JwtAuthGuard, RoleGuard)
-  @RolesDecorator(ROLE.ADMIN)
-  async softDeleteAccount(
-    @Payload() payload: PayloadType,
-    @Param('id') id: string,
-  ): Promise<ApiResponse<AccountModel>> {
-    const result = await this.softDeleteAccountUseCase.execute(payload, id);
-
-    return {
-      data: result,
-      message: 'successfully deleted',
       statusCode: 200,
     };
   }
