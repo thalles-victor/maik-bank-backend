@@ -145,6 +145,13 @@ de depois execute o projeto:
 npm run start
 ```
 
+para quem usar docker:
+
+### com docker
+```
+docker compose up --build
+```
+
 ### Acessando a documentação
 A documentação do swagger está no endpoint raiz do projeto **/**
 ![swagger](./assets/swagger-doc.png)

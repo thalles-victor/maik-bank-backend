@@ -15,7 +15,13 @@
   },
   "servers": [
     {
+      "url": "http://localhost:8080"
+    },
+    {
       "url": "http://localhost:3000"
+    },
+    {
+      "url": "http://localhost:80"
     }
   ],
   "tags": [
@@ -160,7 +166,7 @@
         "description": "Cria uma ou conta bancária para guardar o balance (saldo) e fazer tansações entre outras contas. Um usuário pode ter quantas contas ele quiser. O campo único de indentificação das contas é o id.",
         "requestBody": {
           "content": {
-            "applitaion/json": {
+            "application/json": {
               "schema": {
                 "type": "object",
                 "properties": {
@@ -368,7 +374,7 @@
         }
       }
     },
-    "/v1/account/admin/${id}": {
+    "/v1/account/admin/soft-delete/{id}": {
       "delete": {
         "security": [
           {
