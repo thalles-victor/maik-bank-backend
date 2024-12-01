@@ -200,6 +200,41 @@
         }
       }
     },
+    "/v1/account/many": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "tags": ["account"],
+        "summary": "Lista todas as contas bancárias de um usuário autenticado.",
+        "description": "Lista todas as contas de um usuário authoricado, mostrando somente as suas contas bancárias.",
+        "parameters": [
+          {
+            "name": "queryParams",
+            "in": "query",
+            "required": false,
+            "description": "Query parameters para paginação e filtros",
+            "schema": {
+              "$ref": "#/components/schemas/AccountQueryParams"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Caso esteja tudo certo com a autenticação",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountListResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/account/{id}": {
       "patch": {
         "security": [
@@ -714,6 +749,42 @@
           "href": {
             "type": "string",
             "example": "http://localhost:3000/v1/auth/current"
+          }
+        }
+      },
+      "AccountListResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AccountResponse"
+            }
+          },
+          "message": {
+            "type": "string",
+            "example": "success"
+          },
+          "statusCode": {
+            "type": "number",
+            "example": 200
+          },
+          "meta": {
+            "type": "object",
+            "properties": {
+              "page": {
+                "type": "number",
+                "example": 1
+              },
+              "limit": {
+                "type": "number",
+                "example": 100
+              },
+              "total": {
+                "type": "number",
+                "example": 33
+              }
+            }
           }
         }
       },
