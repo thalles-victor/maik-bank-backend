@@ -10,6 +10,7 @@ import { PaginationDto } from 'src/@shared/@Pagination';
 import { CreateAccountDto } from 'src/Application/UseCases/Account/Create/CreateAccount.dto';
 import { CreateAccountUseCase } from 'src/Application/UseCases/Account/Create/CreateAccount.usecase';
 import { GetManyAccountUseCase } from 'src/Application/UseCases/Account/GetMany/GetManyAccount.usecase';
+import { GetSelfAccountsUseCase } from 'src/Application/UseCases/Account/GetSelfAccounts/GetSelfAccounts.usecase';
 import { GetAccountInformationUseCase } from 'src/Application/UseCases/Account/Informations/Informations.usecase';
 import { UpdateAccountDto } from 'src/Application/UseCases/Account/UpdateStatus/UpdateAccount.dto';
 import { UpdateAccountUseCase } from 'src/Application/UseCases/Account/UpdateStatus/UpdateAccount.usecase';
@@ -27,6 +28,7 @@ export class AccountResolver {
     private readonly getManyAccountByCurrent: GetManyAccountUseCase,
     private readonly updateAccountUseCase: UpdateAccountUseCase,
     private readonly getAccountInformation: GetAccountInformationUseCase,
+    private readonly getSelfAccountsUseCase: GetSelfAccountsUseCase,
   ) {}
 
   @Mutation(() => AccountObjectTypeResponse)
@@ -121,6 +123,26 @@ export class AccountResolver {
       data: result,
       message: 'update successfully',
       statusCode: 200,
+    };
+  }
+
+  @Query(() => AccountListObjectTypeResponse)
+  @UseGuards(GqlJwtAuthGuard, RoleGuard)
+  @RolesDecorator(ROLE.ADMIN, ROLE.USER)
+  async getSelfAccounts(
+    @Payload() payload: PayloadType,
+    @Args('pagination') paginationDto: PaginationDto,
+  ): Promise<AccountListObjectTypeResponse> {
+    const { data, metadata } = await this.getSelfAccountsUseCase.execute(
+      payload,
+      paginationDto,
+    );
+
+    return {
+      data: data,
+      message: 'success',
+      statusCode: 200,
+      meta: metadata,
     };
   }
 }
