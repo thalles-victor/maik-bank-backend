@@ -1,24 +1,28 @@
 import 'dotenv/config';
-import { env } from 'src/@shared/@utils';
 
+import { env } from 'src/@shared/@utils';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import * as swaggerUi from 'swagger-ui-express';
 import { ValidationPipe } from '@nestjs/common';
-import SwaggerJson from '../swagger.json';
+import * as path from 'node:path';
+import * as fs from 'node:fs';
+import { SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(new ValidationPipe());
-
-  // const swaggerFile = path.join(__dirname, '..', 'swagger.yaml');
-  // console.log(swaggerFile);
-  // const swaggerDocument = fs.readFileSync(swaggerFile, 'utf8');
-  // const swaggerJSON = JSON.parse(JSON.stringify(swaggerDocument));
-
-  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(SwaggerJson));
-
+  app.enableCors({
+    origin: '*',
+  });
   app.enableVersioning();
+
+  const swaggerJsonDocument = fs.readFileSync(
+    path.join(__dirname, '..', 'swagger.json'),
+    'utf-8',
+  );
+  const swaggerDocument = JSON.parse(swaggerJsonDocument);
+  SwaggerModule.setup('/api-docs', app, swaggerDocument);
+
   await app.listen(env.BACKEND_PORT ?? 3000);
 }
 bootstrap();

@@ -9,6 +9,10 @@ services:
       - .docker.env
     environment:
       NODE_ENV: production
+    volumes:
+      # não estava funionando mas não acho que seja isso
+      # coloquei so para garantir que ele vá para o container.
+      - ./swagger.json:/app/swagger.json
     deploy:
       replicas: 3
       resources:
