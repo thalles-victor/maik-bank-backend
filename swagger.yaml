@@ -1,0 +1,644 @@
+openapi: 3.0.3
+info:
+  title: Swagger Petstore - OpenAPI 3.0
+  description: |-
+     A MaikBank é um banco digital criado para facilitar a vidas das pessoas lidando com transações bancárias de forma rápida seguras.
+     Cada dia que passa, o mundo fica mais digital, e por isso nasce a Maik para auxiliar no desenvolvimento da sociedade.
+
+     
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: thalles.victor2012@gmail.com
+  license:
+    name: MIT Licence
+    url: https://www.mit.edu/~amini/LICENSE.md
+  version: 1.0.0
+externalDocs:
+  description: Find out more about Swagger
+  url: http://swagger.io
+servers:
+  - url: http://localhost:3000
+tags:
+  - name: auth
+    description: Autenticação na plataforma.
+  - name: account
+    description: Conta bancária que é usada para armazenar os o saldo do usuário
+  - name: transactions
+    description: Transações bancárias seja para fazer depósito, saque e transações para outra conta.
+paths:
+  /v1/auth/signUp:
+    post:
+      tags:
+        - auth
+      summary: Criar uma conta
+      description: |-
+        Esse método cria uma conta nova, para se cadastrar é nescessário colocar os dados descritos 
+        corpo da requisição. Se já tiver o usuáio cadastrado com o mesmo email ou cpfCnpj, a api não vai permitir cadastrar novamente.
+        Se quiser cadastrar o usuário ADMIN, é nescessário colocar o email dele que voi passado nas variáveis de ambiente com uma senha. !!! Atenção: a senha que usar para cadastar não vai valer para o usuário ADMIN pois ao fazer a autenticação, tem que usar a senha que voi passado nas variáveis de ambiente e não a senha de cadastro. Lembrando que isso só vale para o ADMIN.
+      operationId: CreateUser
+      requestBody:
+        description: Corpo da requisição
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAccountDto'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'          
+        '401':
+          description: Não autorizado
+  /v1/auth/signIn:
+    post:
+      tags:
+        - auth
+      summary: Se autenticar na plataforma com uma conta já cadastrada.
+      description: Se for se autenticar como admin, use as credenciais passada nas vairáveis de ambiente
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: jhon@gmail.com
+                password:
+                  type: string
+                  example: "#Senha123"
+        
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AuthResponse'                      
+        '401':
+          description: Não autorizado
+  /v1/auth/current:
+    get:
+      security:
+        - bearerAuth: []
+      tags: 
+        - auth
+      summary: Pegar informações do usuário autenticado
+      description: Com o usuário já cadastrado e autenticado usando o jwt é possível pegar suas infrmações basicas
+      responses:
+        '200':
+          description: Retorna sucesso se o token jwt estiver válido
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:  
+                  data:
+                    $ref: '#/components/schemas/UserAuth'
+                  message:
+                    type: string
+                    default: "success"
+                  satusCode:
+                    type: number
+                    default: 200
+  
+  /v1/account:
+    post:
+      security:
+        - bearerAuth: []
+      tags: 
+        - account
+      summary: Cria uma conta bancária.
+      description: Cria uma ou conta bancária para guardar o balance (saldo) e fazer tansações entre outras contas. Um usuário pode ter quantas contas ele quiser. O campo único de indentificação das contas é o id.
+      requestBody: 
+        content: 
+          applitaion/json:
+            schema: 
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: Conta principal
+      responses:
+        '200':
+          description: Retorna sucesso se o token jwt estiver válido
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:  
+                  data:
+                    $ref: '#/components/schemas/AccountResponse'
+                  message:
+                    type: string
+                    default: "success"
+                  satusCode:
+                    type: number
+                    default: 200
+  /v1/account/{id}:
+    patch:
+      security:
+        - bearerAuth: []
+      tags:
+        - account
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the account to retrieve
+          required: true
+          schema:
+            type: string
+            example: ryhbr7oi2WMH49X
+      summary: Atualiza uma conta já criada.
+      description: Este método atuliza uma conta já criada e que pertence a o usuário autenticado não sendo possível alterar dados de outros usuários.
+      requestBody: 
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: Novo nome da conta
+                status:
+                  enum:
+                    - ACTIVE
+                    - INACTIVE
+                  example: ACTIVE
+      responses: 
+        '200':
+          description: sucesso na atualização
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountResponse'
+  
+    get:
+      security:
+        - bearerAuth: []
+      tags:
+        - account
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the account to retrieve
+          required: true
+          schema:
+            type: string
+            example: ryhbr7oi2WMH49X
+        - name: queryParams
+          in: query
+          required: false
+          description: Query parameters para paginação e filtros
+          schema: 
+            $ref: '#/components/schemas/AccountQueryParams'
+      summary: Busca informações de uma conta do usuário autenticado incluindo somente suas suas trasações
+      description: Esse método busca informações de uma conta incluindo suas transações de forma paginada com capacidade de fazer filtros de busca.
+      responses: 
+        '200':
+          description: "sucesso na requisição"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetAccountWithTransactionsResponse"
+
+
+  /v1/account/admin/many:
+    get:
+      security:
+        - bearerAuth: []
+      tags:
+        - account
+      summary: lista todas as contas de todos os usuários na plataforma.
+      description: lista todas as contas bancárias feitas por todos os usuários, somente o administrador tem permissão para fazer essa requisição.
+      parameters:
+      - name: queryParams
+        in: query
+        required: false
+        description: Query parameters para paginação e filtros
+        schema: 
+          $ref: '#/components/schemas/AccountQueryParams'
+      responses:
+        '200':
+          description: "sucesso na requisição"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AccountsData" 
+  /v1/account/admin/${id}:
+    delete:
+      security:
+        - bearerAuth: []
+      tags:
+        - account
+      summary: Deletar de forma segura sem remover o recurso.
+      description: Soft delte é uma forma de deletar uma informação do banco de excluila, podendo recuperar ela.
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the account to retrieve
+          required: true
+          schema:
+            type: string
+            example: ryhbr7oi2WMH49X
+      responses:
+        '200':
+          description: "sucesso ao deletar"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AccountResponse"
+
+  /v1/transaction/self-deposit:
+    post:
+      security:
+        - bearerAuth: []
+      tags:
+        - transactions
+      summary: Depositar em uma conta bancária.
+      description: Deposita em uma conta bancária que pertence a quem está autenticado já que o usuário pode ter varias contas, ele somente pode depositar a quel lhe pertence.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                value:
+                  type: number
+                  example: 100
+                accountId:
+                    type: string
+                    example: "ryhbr7oi2WMH49X"
+      responses:
+        '200':
+          description: "successo no depósito"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  transaction:
+                    $ref: "#/components/schemas/Transaction"
+                  pdfVoucherUrl:
+                    type: string
+                    example: "http://localhost:3000/v1/transaction/voucher/y674b666dm3v831"
+
+  /v1/transaction/drawl:
+    post:
+      security:
+        - bearerAuth: []
+      tags:
+        - transactions
+      summary: Realizar um saque bancário.
+      description: Realiza um saque bancário em uma conta que pertence a quem está autenticado desde que a conta esteja ativa e o balancer seja maior ou igual ao valor de saque.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                value:
+                  type: number
+                  example: 100
+                accountId:
+                    type: string
+                    example: "ryhbr7oi2WMH49X"
+      responses:
+        '200':
+          description: "successo no depósito"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  transaction:
+                    $ref: "#/components/schemas/Transaction"
+                  href:
+                    type: string
+                    example: "http://localhost:3000/v1/transaction/voucher/y674b666dm3v831"
+                  message:
+                    type: string
+                    example: success
+                  statusCode:
+                    type: number
+                    example: 200
+
+  /v1/transaction/transfer:
+    post:
+      security:
+        - bearerAuth: []
+      tags:
+        - transactions
+      summary: Ralizar transferência entre contas.
+      description: Realiza transferência entre contas, sendo possível enviar para conta do mesmo usuário ou de usuários diferentes.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                value:
+                  type: number
+                  example: 100
+                senderId:
+                    type: string
+                    example: "ryhbr7oi2WMH49X"
+                targetId:
+                    type: string
+                    example: "ryhbr7oi2WMH49X"
+      responses:
+        '200':
+          description: "successo no depósito"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  transaction:
+                    $ref: "#/components/schemas/Transaction"
+                  pdfVoucherUrl:
+                    type: string
+                    example: "http://localhost:3000/v1/transaction/voucher/y674b666dm3v831"
+
+  /v1/transaction/voucher/{id}:
+    get:
+      security:
+        - bearerAuth: []
+      tags: 
+        - transactions
+      summary: Gera comprovante em pdf de transações.
+      description: Gera comprovante em pdf de quaisquer transações. Lembrando que para pegar o comprovante, a transação tem que pertencer ao agente de requisição.
+      parameters:
+        - name: id
+          in: path
+          description: o id da transação
+          required: true
+          schema:
+            type: string
+            example: ryhbr7oi2WMH49X
+      responses:
+        '200':
+          description: "sucesso"
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+        '404':
+          description: Transação não encontrada ou não pertencente ao agente de requisição.
+        '401':
+          description: Não autorizado.
+
+components:
+  schemas:
+    CreateAccountDto:
+      type: object
+      properties:
+        name:
+          type: string
+          example: jhon
+        email:
+          type: string
+          example: jhon@gmail.com
+        password:
+          type: string
+          example: "#Senha123"
+        cpfCnpj:
+          type: string
+          example: 000.000.000-00
+        dateBirth:
+          type: string
+          example: 01/02/2001
+          
+    UserAuth:
+      type: object
+      properties:
+        id: 
+          type: string
+          example: 5b229363-3206-4e62-a3d9-b1ee91486c46
+        name:
+          type: string
+          example: jhon
+        email:
+          type: string
+          example: jhon@gmail.com
+        avatar:
+          type: string
+          example: https://github.com/thalles-victor.png
+        role:
+          type: string
+          example: USER
+        isDeleted:
+          type: boolean
+          example: false
+        isBanned:
+          type: boolean
+          example: false
+        dateBirth:
+          type: string
+          example: 01/02/2001
+        updatedAt:
+          type: string
+          example: "2024-11-30T20:33:57.232Z"
+        createdAt:
+          type: string
+          example: "2024-11-30T20:33:57.232Z"
+        
+    AuthResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            user:
+              $ref: '#/components/schemas/UserAuth'
+            access_token:
+              type: string
+              example: eyJhbGciOiJIUzI1N...
+        message:
+          type: string
+          default: success
+        statusCode:
+          type: number
+          default: 201
+        href:
+          type: string
+          example: http://localhost:3000/v1/auth/current
+    AccountResponse:
+      type: object
+      properties:
+        balance:
+          type: number
+          example: 0
+        status:
+          type: string
+          enum:
+            - ACTIVE
+            - INACTIVE
+          example: ACTIVE
+        isDeleted:
+          type: boolean
+          example: false
+        id:
+          type: string
+          example: ryhbr7oi2WMH49X
+        name:
+          type: string
+          example: Conta principal
+        userId:
+          type: string
+          format: uuid
+          example: 5b229363-3206-4e62-a3d9-b1ee91486c46
+        createdAt:
+          type: string
+          format: date-time
+          example: "2024-11-30T20:34:23.710Z"
+        updatedAt:
+          type: string
+          format: date-time
+          example: "2024-11-30T20:34:23.710Z"
+    Transaction:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 89X6748bcbfUFj3
+        type:
+          type: string
+          enum:
+            - TRANSFER
+            - WITHDRAWAL
+            - DEPOSIT
+          example: TRANSFER
+        value:
+          type: number
+          example: 100
+        accountTargetId:
+          type: string
+          example: 2xl674783c8bt53
+        accountSenderId:
+          type: string
+          example: 2bK674783d5sPq3
+        description:
+          type: string
+          nullable: true
+          example: null
+        createdAt:
+          type: string
+          format: date-time
+          example: "2024-11-28T18:55:59.138Z"
+        updatedAt:
+          type: string
+          format: date-time
+          example: "2024-11-28T18:55:59.159Z"
+        status:
+          type: string
+          enum:
+            - PENDING
+            - COMPLETED
+            - FAILED
+          example: COMPLETED
+    AccountsData:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/AccountResponse'
+        metadata:
+          type: object
+          properties:
+            limit:
+              type: integer
+              example: 3
+            page:
+              type: integer
+              example: 1
+            total:
+              type: integer
+              example: 11
+    TransactionsData:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Transaction'
+        metadata:
+          type: object
+          properties:
+            limit:
+              type: integer
+              example: 3
+            page:
+              type: integer
+              example: 1
+            total:
+              type: integer
+              example: 11
+
+    GetAccountWithTransactionsResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            account:
+              $ref: '#/components/schemas/AccountResponse'
+            transactions:
+              $ref: '#/components/schemas/TransactionsData'
+
+    AccountQueryParams:
+      type: object
+      properties:
+        page:
+          type: integer
+          description: Page number for pagination
+          example: 1
+        limit:
+          type: integer
+          description: Number of results per page
+          example: 100
+        filters:
+          type: object
+          description: Filters for the account properties
+          properties:
+            id:
+              type: string
+              example: SYnQBQjtEBSV0n7
+            name:
+              type: string
+              example: "Conta nova"            
+            balance:
+              type: number
+              example: 80
+            status:
+              type: string
+              enum:
+                - ACTIVE
+                - INACTIVE
+              example: ACTIVE
+            isDeleted:
+              type: boolean
+              example: false
+            createdAt:
+              type: string
+              example: "2024-11-29T12:23:59.384Z"
+            updatedAt:
+              type: string
+              example: "2024-11-29T12:23:59.384Z"
+            userId:
+              type: string
+              example: "5b229363-3206-4e62-a3d9-b1ee91486c46"
+
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT # optional, arbitrary value for documentation purposes
