@@ -83,3 +83,22 @@ export type AccountUpdateModel =
   | Pick<AccountModel, 'isDeleted'>;
 
 export type AccountModelUniqRef = Pick<AccountModel, 'id'>;
+
+export class AccountModelWhereConditions {
+  @Expose()
+  id: string;
+  @Expose()
+  name: string;
+  @Expose()
+  balance: number;
+  @Expose()
+  status: ACCOUNT_STATUS;
+  @Expose()
+  isDeleted: boolean;
+  @Expose()
+  createdAt: Date;
+  @Expose()
+  updatedAt: Date;
+  @Expose()
+  userId: string;
+}

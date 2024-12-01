@@ -1,6 +1,7 @@
 import {
   AccountModel,
   AccountModelUniqRef,
+  AccountModelWhereConditions,
   AccountUpdateModel,
 } from 'src/Domain/Entities/Account.entity';
 import { PaginationProps, GetWithPaginationResult } from '@types';
@@ -90,7 +91,10 @@ export class AccountSequelizeRepository implements IAccountRepositoryContact {
   ): Promise<GetWithPaginationResult<AccountModel[]>> {
     const filters = pagination.filters;
 
-    const whereConditions = getWhereConditions(filters, AccountModel);
+    const whereConditions = getWhereConditions(
+      filters,
+      AccountModelWhereConditions,
+    );
 
     const { rows, count } = await this.accountModel.findAndCountAll({
       limit: pagination.limit,
