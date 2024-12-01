@@ -9,6 +9,7 @@ import {
 } from 'class-validator';
 import { PaginationProps } from '@types';
 import { Transform } from 'class-transformer';
+import GraphQLJSON from 'graphql-type-json';
 
 @InputType()
 export class PaginationDto implements PaginationProps {
@@ -27,12 +28,13 @@ export class PaginationDto implements PaginationProps {
   @Field(() => Number)
   limit?: number = 100;
 
+  /** @deprecated */
   @Field(() => String, { nullable: true })
   @IsOptional()
   @IsString()
   search?: string;
 
-  @Field(() => String, { nullable: true })
+  @Field(() => GraphQLJSON, { nullable: true })
   @IsOptional()
   @IsObject()
   filters?: Record<string, any>;

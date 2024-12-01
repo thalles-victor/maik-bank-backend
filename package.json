@@ -39,6 +39,7 @@
     "class-validator": "^0.14.1",
     "dotenv": "^16.4.5",
     "graphql": "^16.9.0",
+    "graphql-type-json": "^0.3.2",
     "ioredis": "^5.4.1",
     "pdfmake": "^0.2.15",
     "pg": "^8.13.1",

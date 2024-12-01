@@ -2,13 +2,13 @@ import { UserModel } from '#models';
 import { ROLE } from '@metadata';
 import { TransactionAggregate } from 'src/Domain/Aggregates/Transactions.aggregate';
 
-export type PaginationProps = {
+export interface PaginationProps {
   page?: number;
   limit?: number;
   search?: string;
   filters?: Record<string, any>;
   order?: 'ASC' | 'DESC';
-};
+}
 
 export type GetWithPaginationResult<D> = {
   data: D;
