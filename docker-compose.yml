@@ -1,6 +1,18 @@
 version: '3.8'
 
 services:
+  nginx:
+    image: nginx:latest
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - 80:80
+      - 8080:80
+    networks:
+      - maik-network
+    depends_on:
+      - maik-bank-backend-server
+
   maik-bank-backend-server:
     build:
       context: .
@@ -53,18 +65,6 @@ services:
       - maik-bank-redis_data:/data
     networks:
       - maik-network
-
-  nginx:
-    image: nginx:latest
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
-    ports:
-      - 80:80
-      - 8080:80
-    networks:
-      - maik-network
-    depends_on:
-      - maik-bank-backend-server
 
 volumes:
   maik-bank-postgres_data:
