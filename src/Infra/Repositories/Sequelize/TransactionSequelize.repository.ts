@@ -130,13 +130,19 @@ export class TransactionSequelizeRepository
       TransactionWhereCondition,
     );
 
+    let query = undefined;
+
+    if (whereConditions && or) {
+      query = { [Op.and]: whereConditions, [Op.or]: or };
+    } else if (whereConditions) {
+      query = { [Op.and]: whereConditions };
+    }
+
     const { rows, count } = await this.transactionModel.findAndCountAll({
       limit: pagination.limit,
       offset: (pagination.page - 1) * pagination.limit,
       order: [['createdAt', pagination.order ?? 'DESC']],
-      where: whereConditions
-        ? { [Op.and]: whereConditions, [Op.or]: or }
-        : undefined,
+      where: query,
     });
 
     return {

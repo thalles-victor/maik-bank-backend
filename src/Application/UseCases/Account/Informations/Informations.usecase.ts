@@ -63,10 +63,12 @@ export class GetAccountInformationUseCase {
     const { data, metadata } = await this.transactionRepository.getMany(
       {
         ...transactionPagination,
-
-        //!!!!SEMPRE DEIXE ESSE FILTRO AQUI EMBAIXO PARA EVITAR FALHA DE SEGURANÇA!!!!
         filters: {
-          // accountSenderId: accountId,
+          ...transactionPagination.filters,
+          //!!!!SEMPRE DEIXE ESSES CAMPOS UNDEFINED AQUI EMBAIXO PARA EVITAR FALHA DE SEGURANÇA!!!!
+          //Esses campos vem da URL e se o usuário passar o filtro deles, ele pode ter acesso a outras contas
+          accountId: undefined,
+          accountTargetId: undefined,
         },
       },
       { accountSenderId: accountId, accountTargetId: accountId },
