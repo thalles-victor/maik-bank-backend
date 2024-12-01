@@ -39,12 +39,7 @@ const envSchema = z.object({
 
   // Admin
   ADMIN_EMAIL: z.string().email(),
-  ADMIN_PASSWORD: z
-    .string()
-    .regex(/^(?=.*[A-Z])(?=.*[!#@$%&])(?=.*[0-9])(?=.*[a-z]).{8,100}$/, {
-      message:
-        'A senha deve ter 8 carecteres, um especial um maúsculo e um número no mínimo',
-    }),
+  ADMIN_PASSWORD: z.string(),
 
   // Self backend
   BACKEND_BASE_URL: z.string().url(),
@@ -55,6 +50,16 @@ const envSchema = z.object({
     })
     .transform((val) => parseInt(val, 10)),
   ALLOW_CORS_URL: z.string().url(),
+
+  NODE_MAILER_HOST: z.string(),
+  NODE_MAILER_PORT: z
+    .string()
+    .refine((val) => !isNaN(parseInt(val, 10)), {
+      message: 'POSTGRES_PORT must be a valid number',
+    })
+    .transform((val) => parseInt(val, 10)),
+  NODE_MAILER_USER: z.string(),
+  NODE_MAILER_PASSWORD: z.string(),
 });
 
 export const env = envSchema.parse(process.env);
