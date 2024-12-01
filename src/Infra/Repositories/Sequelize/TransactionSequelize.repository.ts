@@ -121,6 +121,7 @@ export class TransactionSequelizeRepository
 
   async getMany(
     pagination: PaginationProps,
+    or?: Partial<TransactionAggregate>,
   ): Promise<GetWithPaginationResult<TransactionAggregate[]>> {
     const filters = pagination.filters;
 
@@ -133,7 +134,9 @@ export class TransactionSequelizeRepository
       limit: pagination.limit,
       offset: (pagination.page - 1) * pagination.limit,
       order: [['createdAt', pagination.order ?? 'DESC']],
-      where: whereConditions ? { [Op.and]: whereConditions } : undefined,
+      where: whereConditions
+        ? { [Op.and]: whereConditions, [Op.or]: or }
+        : undefined,
     });
 
     return {

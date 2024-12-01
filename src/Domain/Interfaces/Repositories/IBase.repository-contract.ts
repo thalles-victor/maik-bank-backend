@@ -9,6 +9,6 @@ export interface IBaseRepositoryContract<Model, UpdateModel, ModelUniqueRefs> {
   getAll(where?: Partial<Model>): Promise<Model[]>;
   getMany(
     pagination: PaginationProps,
-    where?: Partial<Model>,
+    or?: Partial<Model>,
   ): Promise<GetWithPaginationResult<Model[]>>;
 }

@@ -60,14 +60,17 @@ export class GetAccountInformationUseCase {
       } as ThrowErrorMessage);
     }
 
-    const { data, metadata } = await this.transactionRepository.getMany({
-      ...transactionPagination,
+    const { data, metadata } = await this.transactionRepository.getMany(
+      {
+        ...transactionPagination,
 
-      //!!!!SEMPRE DEIXE ESSE FILTRO AQUI EMBAIXO PARA EVITAR FALHA DE SEGURANÇA!!!!
-      filters: {
-        accountSenderId: accountId,
+        //!!!!SEMPRE DEIXE ESSE FILTRO AQUI EMBAIXO PARA EVITAR FALHA DE SEGURANÇA!!!!
+        filters: {
+          // accountSenderId: accountId,
+        },
       },
-    });
+      { accountSenderId: accountId, accountTargetId: accountId },
+    );
 
     return {
       account: account.dataValues,
