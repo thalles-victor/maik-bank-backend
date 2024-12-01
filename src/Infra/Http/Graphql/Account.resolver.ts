@@ -11,6 +11,9 @@ import { CreateAccountDto } from 'src/Application/UseCases/Account/Create/Create
 import { CreateAccountUseCase } from 'src/Application/UseCases/Account/Create/CreateAccount.usecase';
 import { GetManyAccountUseCase } from 'src/Application/UseCases/Account/GetMany/GetManyAccount.usecase';
 import { GetAccountInformationUseCase } from 'src/Application/UseCases/Account/Informations/Informations.usecase';
+import { UpdateAccountDto } from 'src/Application/UseCases/Account/UpdateStatus/UpdateAccount.dto';
+import { UpdateAccountUseCase } from 'src/Application/UseCases/Account/UpdateStatus/UpdateAccount.usecase';
+
 import {
   AccountInformationObjectTypeResponse,
   AccountListObjectTypeResponse,
@@ -22,6 +25,7 @@ export class AccountResolver {
   constructor(
     private readonly createAccountUseCase: CreateAccountUseCase,
     private readonly getManyAccountByCurrent: GetManyAccountUseCase,
+    private readonly updateAccountUseCase: UpdateAccountUseCase,
     private readonly getAccountInformation: GetAccountInformationUseCase,
   ) {}
 
@@ -45,15 +49,12 @@ export class AccountResolver {
 
   @Query(() => AccountListObjectTypeResponse)
   @UseGuards(GqlJwtAuthGuard, RoleGuard)
-  @RolesDecorator(ROLE.ADMIN, ROLE.USER)
-  async getManyAccountByCurrentAuth(
-    @Payload() payload: PayloadType,
+  @RolesDecorator(ROLE.ADMIN)
+  async getManyAccountAsAdmin(
     @Args('paginationDto') pagination: PaginationDto,
   ): Promise<AccountListObjectTypeResponse> {
-    const { data, metadata } = await this.getManyAccountByCurrent.execute(
-      payload,
-      pagination,
-    );
+    const { data, metadata } =
+      await this.getManyAccountByCurrent.execute(pagination);
 
     return {
       data: data,
@@ -96,6 +97,29 @@ export class AccountResolver {
         },
       },
       message: 'success',
+      statusCode: 200,
+    };
+  }
+
+  @Mutation(() => AccountObjectTypeResponse)
+  async updateSelfBankAccount(
+    @Payload() payload: PayloadType,
+    @Args('accountId') accountId: string,
+    @Args('accountDto') accountDto: UpdateAccountDto,
+  ): Promise<AccountObjectTypeResponse> {
+    if (accountId.length <= 0) {
+      throw new BadRequestException('require account id');
+    }
+
+    const result = await this.updateAccountUseCase.execute(
+      payload,
+      accountDto,
+      accountId,
+    );
+
+    return {
+      data: result,
+      message: 'update successfully',
       statusCode: 200,
     };
   }

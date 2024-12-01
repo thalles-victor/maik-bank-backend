@@ -32,7 +32,7 @@ import { AccountModel } from 'src/Domain/Entities/Account.entity';
 export class AccountController {
   constructor(
     private readonly createAccountUseCase: CreateAccountUseCase,
-    private readonly getManyAccountByCurrent: GetManyAccountUseCase,
+    private readonly getManyAccount: GetManyAccountUseCase,
     private readonly getAccountInformation: GetAccountInformationUseCase,
     private readonly updateAccountUseCase: UpdateAccountUseCase,
     private readonly softDeleteAccountUseCase: SoftDeleteAccountUseCase,
@@ -51,14 +51,10 @@ export class AccountController {
   @Get('admin/many')
   @UseGuards(JwtAuthGuard, RoleGuard)
   @RolesDecorator(ROLE.ADMIN)
-  async getManyByCurrent(
-    @Payload() payload: PayloadType,
+  async getMany(
     @Query() pagination: PaginationDto,
   ): Promise<ApiResponse<AccountModel[]>> {
-    const { data, metadata } = await this.getManyAccountByCurrent.execute(
-      payload,
-      pagination,
-    );
+    const { data, metadata } = await this.getManyAccount.execute(pagination);
 
     return {
       data: data,

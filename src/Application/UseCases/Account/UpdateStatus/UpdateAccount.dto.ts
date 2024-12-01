@@ -1,4 +1,5 @@
 import { ACCOUNT_STATUS } from '@metadata';
+import { Field, InputType } from '@nestjs/graphql';
 import {
   IsEnum,
   IsNotEmpty,
@@ -7,13 +8,16 @@ import {
   Length,
 } from 'class-validator';
 
+@InputType()
 export class UpdateAccountDto {
+  @Field(() => String)
   @IsString()
   @IsNotEmpty()
   @IsOptional()
   @Length(1, 70)
   name: string;
 
+  @Field(() => String)
   @IsString()
   @IsNotEmpty()
   @IsOptional()
