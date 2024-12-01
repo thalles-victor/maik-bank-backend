@@ -49,7 +49,6 @@ const envSchema = z.object({
       message: 'POSTGRES_PORT must be a valid number',
     })
     .transform((val) => parseInt(val, 10)),
-  ALLOW_CORS_URL: z.string().url(),
 
   NODE_MAILER_HOST: z.string(),
   NODE_MAILER_PORT: z

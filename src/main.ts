@@ -21,7 +21,7 @@ async function bootstrap() {
     'utf-8',
   );
   const swaggerDocument = JSON.parse(swaggerJsonDocument);
-  SwaggerModule.setup('/api-docs', app, swaggerDocument);
+  SwaggerModule.setup('/', app, swaggerDocument);
 
   await app.listen(env.BACKEND_PORT ?? 3000);
 }
