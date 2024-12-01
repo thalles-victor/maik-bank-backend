@@ -44,3 +44,11 @@ export interface TransactionUseCaseResult {
   transaction: TransactionAggregate;
   pdfVoucherUrl: string;
 }
+
+export interface TransactionMailSend {
+  users: {
+    name: string;
+    email: string;
+  }[];
+  transaction: TransactionAggregate;
+}
