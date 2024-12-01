@@ -1,4 +1,5 @@
 import { UserModel } from '#models';
+import { ROLE } from '@metadata';
 import { TransactionAggregate } from 'src/Domain/Aggregates/Transactions.aggregate';
 
 export type PaginationProps = {
@@ -21,7 +22,7 @@ export type ThrowErrorMessage = {
 
 export type PayloadType = {
   sub: string;
-  roles: string[];
+  roles: ROLE[];
   isDeleted: boolean;
   isBanned: boolean;
 };

@@ -1,13 +1,15 @@
 import { ROLE } from '@metadata';
 import {
   CanActivate,
+  ContextType,
   ExecutionContext,
   ForbiddenException,
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { ThrowErrorMessage } from '@types';
+import { GqlExecutionContext } from '@nestjs/graphql';
+import { PayloadType, ThrowErrorMessage } from '@types';
 
 @Injectable()
 export class RoleGuard implements CanActivate {
@@ -15,14 +17,26 @@ export class RoleGuard implements CanActivate {
 
   canActivate(context: ExecutionContext): boolean {
     const roles = this.reflector.get('roles', context.getHandler());
+    const reqType = context.getType<ContextType | 'graphql'>();
 
     if (!roles) {
       return true;
     }
 
-    const request = context.switchToHttp().getRequest();
+    let jwtPayload: PayloadType;
+    if (reqType === 'graphql') {
+      const gqlCtx = GqlExecutionContext.create(context);
+      const ctx = gqlCtx.getContext();
 
-    const jwtPayload = request.user;
+      const request = ctx.req;
+
+      jwtPayload = request.user;
+    } else if (reqType === 'http') {
+      const request = context.switchToHttp().getRequest();
+      jwtPayload = request.user as PayloadType;
+    } else {
+      // handle rpc and ws if you have them, otherwise ignore and make previous `else if` just an `else`
+    }
 
     if (!jwtPayload) {
       console.log('\u001b[31m Auth guard not implemented in method');
