@@ -12,9 +12,16 @@ import { UserModule } from './User.module';
 import { TransactionResolver } from 'src/Infra/Http/Graphql/Transaction.resolver';
 import { WithdrawalUseCase } from 'src/Application/UseCases/Transaction/WithDrawl/Drawl.usecase';
 import { TransactionService } from 'src/Domain/Services/Transaction.service';
+import { SendMailProducerService } from 'src/Infra/Jobs/Producers/Job.Producer';
+import { BullModule } from '@nestjs/bullmq';
 
 @Module({
-  imports: [UserModule],
+  imports: [
+    BullModule.registerQueue({
+      name: KEY_OF_INJECTION.EMAIL_QUEUE,
+    }),
+    UserModule,
+  ],
   controllers: [TransactionController],
   providers: [
     {
@@ -40,6 +47,7 @@ import { TransactionService } from 'src/Domain/Services/Transaction.service';
     GetVoucherUseCase,
     SelfDepositUseCase,
     WithdrawalUseCase,
+    SendMailProducerService,
   ],
 })
 export class TransactionModule {}

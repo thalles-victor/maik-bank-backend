@@ -19,9 +19,12 @@ import { APP_GUARD, APP_PIPE } from '@nestjs/core';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { CustomThrottlerGuard } from './@shared/@guards/custom-throttler.guard';
+import { BullModule } from '@nestjs/bullmq';
+import { JobsModules } from './Infra/Jobs/Jobs.module';
 
 @Module({
   imports: [
+    JobsModules,
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: true,
@@ -60,6 +63,13 @@ import { CustomThrottlerGuard } from './@shared/@guards/custom-throttler.guard';
       },
       verifyOptions: {
         ignoreExpiration: false,
+      },
+    }),
+    BullModule.forRoot({
+      connection: {
+        host: env.REDIS_HOST,
+        password: env.REDIS_PASSWORD,
+        port: env.REDIS_PORT,
       },
     }),
 

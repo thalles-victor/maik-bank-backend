@@ -31,6 +31,7 @@ export class CreateAccountUseCase {
       balance: 0,
       status: ACCOUNT_STATUS.ACTIVE,
       userId: user.id,
+      email: user.email,
       createdAt: new Date(),
       updatedAt: new Date(),
       user: user,

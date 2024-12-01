@@ -7,9 +7,16 @@ import { AuthSignInUseCase } from 'src/Application/UseCases/Auth/Sign-in/SignIn.
 import { AuthCurrent } from 'src/Application/UseCases/Auth/Current/Current.usecase';
 import { UserModule } from './User.module';
 import { AuthResolver } from 'src/Infra/Http/Graphql/Auth.resolver';
+import { SendMailProducerService } from 'src/Infra/Jobs/Producers/Job.Producer';
+import { BullModule } from '@nestjs/bullmq';
 
 @Module({
-  imports: [UserModule],
+  imports: [
+    BullModule.registerQueue({
+      name: KEY_OF_INJECTION.EMAIL_QUEUE,
+    }),
+    UserModule,
+  ],
   controllers: [AuthController],
   providers: [
     {
@@ -20,6 +27,7 @@ import { AuthResolver } from 'src/Infra/Http/Graphql/Auth.resolver';
     AuthSignUpUseCase,
     AuthSignInUseCase,
     AuthCurrent,
+    SendMailProducerService,
   ],
 })
 export class AuthModule {}

@@ -24,6 +24,7 @@ import { IAccountRepositoryContact } from 'src/Domain/Interfaces/Repositories/IA
 import { TransactionAggregate } from 'src/Domain/Aggregates/Transactions.aggregate';
 import { shortId } from '@utils';
 import { getTransactionVoucherUrl } from 'src/@shared/pdf/voucher';
+import { SendMailProducerService } from 'src/Infra/Jobs/Producers/Job.Producer';
 
 @Injectable()
 export class TransferUseCase {
@@ -34,6 +35,7 @@ export class TransferUseCase {
     private readonly userRepository: IUserRepositoryContract,
     @Inject(KEY_OF_INJECTION.ACCOUNT_REPOSITORY)
     private readonly accountRepository: IAccountRepositoryContact,
+    private readonly sendMailQueueService: SendMailProducerService,
   ) {}
 
   async execute(
@@ -130,6 +132,21 @@ export class TransferUseCase {
         transactionId: transaction.dataValues.id,
       });
 
+      // send mail
+
+      await this.sendMailQueueService.transactionSendEmail({
+        users: [
+          {
+            name: 'reciver',
+            email: targetAccount.email,
+          },
+          {
+            name: 'sender',
+            email: senderAccount.email,
+          },
+        ],
+        transaction: transactionUpdated,
+      });
       return {
         transaction: transactionUpdated,
         pdfVoucherUrl: getTransactionVoucherUrl(transactionUpdated.id),
