@@ -28,6 +28,7 @@ import { JobsModules } from './Infra/Jobs/Jobs.module';
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: true,
+      csrfPrevention: false,
       context: ({ req, res }) => ({ req, res }),
     }),
 
