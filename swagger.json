@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Swagger Petstore - OpenAPI 3.0",
-    "description": "A MaikBank é um banco digital criado para facilitar a vidas das pessoas lidando com transações bancárias de forma rápida seguras.\nCada dia que passa, o mundo fica mais digital, e por isso nasce a Maik para auxiliar no desenvolvimento da sociedade.",
+    "description": "Cada dia que passa o mundo fica mais digital, e por isso nasce a Maik para auxiliar no desenvolvimento e conforto da sociedade.\n\nA MaikBank é um banco digital criado para facilitar a vidas das pessoas lidando com transações bancárias de forma rápida seguras.",
     "termsOfService": "http://swagger.io/terms/",
     "contact": {
       "email": "thalles.victor2012@gmail.com"
@@ -12,10 +12,6 @@
       "url": "https://www.mit.edu/~amini/LICENSE.md"
     },
     "version": "1.0.0"
-  },
-  "externalDocs": {
-    "description": "Find out more about Swagger",
-    "url": "http://swagger.io"
   },
   "servers": [
     {
@@ -225,7 +221,7 @@
           }
         ],
         "summary": "Atualiza uma conta já criada.",
-        "description": "Este método atuliza uma conta já criada e que pertence a o usuário autenticado não sendo possível alterar dados de outros usuários.",
+        "description": "Este método atualiza uma conta já criada e que pertence a o usuário autenticado, não sendo possível alterar dados de contas de outros usuários. O status da conta bloqueia para que não faça nenhum tipo tranção, o que pode ser alterado pelo usuário quantas vezes ele quiser. Se precisar bloquear a conta do usuáio permanentemente, não sendo possível de ele fazer qualquer transação, o ADMIN pode usar o soft delete account que vai desabilitar ela.",
         "requestBody": {
           "content": {
             "application/json": {
@@ -282,12 +278,12 @@
             "required": false,
             "description": "Query parameters para paginação e filtros",
             "schema": {
-              "$ref": "#/components/schemas/AccountQueryParams"
+              "$ref": "#/components/schemas/TransactionQueryParams"
             }
           }
         ],
-        "summary": "Busca informações de uma conta do usuário autenticado incluindo somente suas suas trasações",
-        "description": "Esse método busca informações de uma conta incluindo suas transações de forma paginada com capacidade de fazer filtros de busca.",
+        "summary": "Busca informações de uma conta do usuário autenticado incluindo suas trasações.",
+        "description": "Esse método busca informações de uma conta do usuário autenticado incluindo suas transações de forma paginada com capacidade de fazer filtros de busca das e somnente das transações, pois ela já busca a conta pelo id. As transações listadas, somente são transções que o usuário autenticado participou, seja por depósito, saque ou transferência enviando ou recebendo de outras contas.",
         "responses": {
           "200": {
             "description": "sucesso na requisição",
@@ -309,9 +305,9 @@
             "bearerAuth": []
           }
         ],
-        "tags": ["account"],
-        "summary": "lista todas as contas de todos os usuários na plataforma.",
-        "description": "lista todas as contas bancárias feitas por todos os usuários, somente o administrador tem permissão para fazer essa requisição.",
+        "tags": ["account", "admin"],
+        "summary": "Lista todas as contas de todos os usuários na plataforma.",
+        "description": "lista todas as contas bancárias feitas por todos os usuários e somente o administrador tem permissão para fazer esta requisição.",
         "parameters": [
           {
             "name": "queryParams",
@@ -344,9 +340,9 @@
             "bearerAuth": []
           }
         ],
-        "tags": ["account"],
-        "summary": "Deletar de forma segura sem remover o recurso.",
-        "description": "Soft delte é uma forma de deletar uma informação do banco de excluila, podendo recuperar ela.",
+        "tags": ["account", "admin"],
+        "summary": "Deletar de forma segura sem remover o recurso do banco.",
+        "description": "Soft delte é uma forma de deletar um recurso do banco sem excluir diretamente, podendo recuperar-lá posteriormente se precisar.",
         "parameters": [
           {
             "name": "id",
@@ -366,6 +362,41 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/AccountResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/transaction/admin/many": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "tags": ["transactions", "admin"],
+        "summary": "Lista TODAS as transações feitas na plataforma por todos os usuários na oplataforma.",
+        "description": "Esse método tem a capacidade de listar todas as transações feitas na plataforma, de todos os usuários, podendo ser usada para um painel administrativo por exemplo. Somente o ADMIN pode ter acesso a esse método.",
+        "parameters": [
+          {
+            "name": "queryParams",
+            "in": "query",
+            "required": false,
+            "description": "Query parameters para paginação e filtros",
+            "schema": {
+              "$ref": "#/components/schemas/TransactionQueryParams"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "resposta com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransactionsData"
                 }
               }
             }
@@ -845,54 +876,135 @@
           }
         }
       },
+      "TransactionQueryParams": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "integer",
+            "description": "Número da página para paginação",
+            "example": 1
+          },
+          "limit": {
+            "type": "integer",
+            "description": "Número de resultados por página",
+            "example": 100
+          },
+          "filters": {
+            "type": "object",
+            "description": "Filtros para filtrar as transações",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Identificador único da transação",
+                "example": "XOVr674c335a5k4"
+              },
+              "type": {
+                "type": "string",
+                "description": "Tipo de transação",
+                "enum": ["TRANSFER", "DEPOSIT", "WITHDRAWAL"],
+                "example": "TRANSFER"
+              },
+              "value": {
+                "type": "number",
+                "description": "Valor da transação",
+                "example": 100
+              },
+              "accountTargetId": {
+                "type": "string",
+                "description": "Identificador da conta de destino",
+                "example": "B7FvzFx1yVbZPUL"
+              },
+              "accountSenderId": {
+                "type": "string",
+                "description": "Identificador da conta de origem",
+                "example": "f7R75eHBtb2rGlB"
+              },
+              "description": {
+                "type": "string",
+                "description": "Descrição da transação",
+                "example": "Pagamento de fatura",
+                "nullable": true
+              },
+              "createdAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "Data de criação da transação",
+                "example": "2024-12-01T09:58:50.853Z"
+              },
+              "updatedAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "Data de última atualização da transação",
+                "example": "2024-12-01T09:58:50.867Z"
+              },
+              "status": {
+                "type": "string",
+                "description": "Status da transação",
+                "enum": ["PENDING", "COMPLETED", "FAILED"],
+                "example": "COMPLETED"
+              }
+            }
+          }
+        }
+      },
       "AccountQueryParams": {
         "type": "object",
         "properties": {
           "page": {
             "type": "integer",
-            "description": "Page number for pagination",
+            "description": "Número da página para paginação",
             "example": 1
           },
           "limit": {
             "type": "integer",
-            "description": "Number of results per page",
+            "description": "Número de resultados por página",
             "example": 100
           },
           "filters": {
             "type": "object",
-            "description": "Filters for the account properties",
+            "description": "Filtros para buscar contas",
             "properties": {
               "id": {
                 "type": "string",
+                "description": "Identificador único da conta",
                 "example": "SYnQBQjtEBSV0n7"
               },
               "name": {
                 "type": "string",
+                "description": "Nome da conta",
                 "example": "Conta nova"
               },
               "balance": {
                 "type": "number",
+                "description": "Saldo disponível na conta",
                 "example": 80
               },
               "status": {
                 "type": "string",
+                "description": "Status da conta",
                 "enum": ["ACTIVE", "INACTIVE"],
                 "example": "ACTIVE"
               },
               "isDeleted": {
                 "type": "boolean",
+                "description": "Indica se a conta foi excluída",
                 "example": false
               },
               "createdAt": {
                 "type": "string",
+                "format": "date-time",
+                "description": "Data de criação da conta",
                 "example": "2024-11-29T12:23:59.384Z"
               },
               "updatedAt": {
                 "type": "string",
+                "format": "date-time",
+                "description": "Data da última atualização da conta",
                 "example": "2024-11-29T12:23:59.384Z"
               },
               "userId": {
                 "type": "string",
+                "description": "Identificador único do usuário associado à conta",
                 "example": "5b229363-3206-4e62-a3d9-b1ee91486c46"
               }
             }
