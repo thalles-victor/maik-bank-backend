@@ -30,6 +30,16 @@ export class AccountModel extends Model {
   @Field(() => String)
   name: string;
 
+  @Column({
+    type: DataType.STRING(70),
+    allowNull: false,
+    validate: {
+      len: [1, 70],
+    },
+  })
+  @Field(() => String)
+  email: string;
+
   @Expose()
   @Column({
     type: DataType.NUMBER(),
