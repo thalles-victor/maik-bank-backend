@@ -235,4 +235,7 @@ paginationDto: {
 
 as propriedades são as propriedades da entidade das quais desejam ser filtradas.
 
-
+### Recursos extras: 
+Autenticação/Autorização, controlle de acesso (ADMIN, USER), dockerização, proxy reverso e balanceador de carga nginx server, rate limiter para evitar ataques DDoS, graphql, serviço de email, filas e jobs assincronos, filtros de busca com paginação,
+geração de pdf de comporvante, transacions (de banco de dados) para fazer transações bancárias, inversão de dependências, tipagem de resposta de apis mais robustas,
+tradução de exceptions para internacionalização e soft delete para contas.
