@@ -21,14 +21,17 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { CustomThrottlerGuard } from './@shared/@guards/custom-throttler.guard';
 import { BullModule } from '@nestjs/bullmq';
 import { JobsModules } from './Infra/Jobs/Jobs.module';
+import * as path from 'node:path';
 
 @Module({
   imports: [
     JobsModules,
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
-      autoSchemaFile: true,
-      csrfPrevention: false,
+      autoSchemaFile: path.join(process.cwd(), 'src/schema.gql'),
+      csrfPrevention: false, //Nao é recomendado, o cerso seria enviar os headers na requisição
+      playground: true,
+      introspection: true,
       context: ({ req, res }) => ({ req, res }),
     }),
 
