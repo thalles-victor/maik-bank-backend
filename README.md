@@ -170,10 +170,13 @@ Eu costumo utilizar o [Altair Client](https://www.google.com/url?sa=t&source=web
 ## Os clients não baixa Pdfs
 Essa api tem recurso de gerar PDFs de transações sendo exeplicado na doc da api, mas como a maioria dos clients não tem a capacidade de baixar o arquivo, você pode testar rodando o curl:
 
+!!! So tome cuidado que se a tranção não existir, ou não pertencer ao usuário da requisição, o **curl** vai baixar um arquivo que não é pdf.
+
 ```terminal
-curl -X GET http://localhost:3000/v1/transaction/voucher/{transactionId} \
--H "{Authorization: Bearer <token....>} \
--o nome-do-arquivo.pdf
+curl --request GET \
+  --url http://localhost:3000/v1/transaction/voucher/<transactionId> \
+  --header 'authorization: Bearer <token>' \
+  --output voucher-name.pdf
 ```
 
 se você precisar utilizar código, pode utilizar ess função para salvar o arquivo:
