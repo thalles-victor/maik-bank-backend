@@ -114,14 +114,6 @@ NODE_MAILER_PASSWORD=
 </div>
 
 
-## Rodando as migrations
-Antes de executar o projeto, é nescessário que execute as migrations para criar as tabelas no banco de dados.
-
-Se você for rodar de forma **local** use o comando:
-```terminal
-npm rum migration:run
-```
-
 Mas caso use o **doker**, não precisa, já que ele vai rodar os comandos descritos no arquivo [entrypoint.sh](./entrypoint.sh) que vai rodar as migrations automaticamente :-)
 
 ## Instalando as dependências
@@ -132,10 +124,18 @@ npm install
 ```
 Se vai utilizar o **docker** não precisa rodar esse comando.
 
+## Rodando as migrations
+Antes de executar o projeto, é nescessário que execute as migrations para criar as tabelas no banco de dados.
+
+Se você for rodar de forma **local** use o comando:
+```terminal
+npm rum migration:run
+```
+
 ## Rodando a aplicação.
 Para rodar aplicação, use o comando:
 
-### local
+### modo local (sem docker)
 primeiro faça a build do projeto:
 ```terminal
 npm run build
@@ -167,10 +167,10 @@ Eu costumo utilizar o [Altair Client](https://www.google.com/url?sa=t&source=web
 </div>
 
 
-## Os clients não baixa Pdfs
-Essa api tem recurso de gerar PDFs de transações sendo exeplicado na doc da api, mas como a maioria dos clients não tem a capacidade de baixar o arquivo, você pode testar rodando o curl:
+## Os clients (http) não baixa Pdfs
+Essa api tem recurso de gerar PDFs de transações sendo exeplicado na doc da api, mas como a maioria dos clients (http) não tem a capacidade de baixar o arquivo, você pode testar rodando o curl:
 
-!!! So tome cuidado que se a tranção não existir, ou não pertencer ao usuário da requisição, o **curl** vai baixar um arquivo que não é pdf.
+!!! So tome cuidado que se a tranção não existir, ou não pertencer ao usuário da requisição, o **curl** vai baixar um arquivo que não é pdf, talvez uma página de not found do nginx ou um json de erro da API.
 
 ```terminal
 curl --request GET \
