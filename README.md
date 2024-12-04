@@ -114,8 +114,6 @@ NODE_MAILER_PASSWORD=
 </div>
 
 
-Mas caso use o **doker**, não precisa, já que ele vai rodar os comandos descritos no arquivo [entrypoint.sh](./entrypoint.sh) que vai rodar as migrations automaticamente :-)
-
 ## Instalando as dependências
 Se vai utilizar de forma **local** instale as dependências do node utilizando o comando:
 
@@ -131,6 +129,8 @@ Se você for rodar de forma **local** use o comando:
 ```terminal
 npm rum migration:run
 ```
+
+Mas caso use o **doker**, não precisa rodar esse comando pois ele já vai rodar as os comandos descritos no arquivo [entrypoint.sh](./entrypoint.sh) que inclui as migrations :-)
 
 ## Rodando a aplicação.
 Para rodar aplicação, use o comando:
@@ -240,5 +240,5 @@ as propriedades são as propriedades da entidade das quais desejam ser filtradas
 
 ### Recursos extras: 
 Autenticação/Autorização, controlle de acesso (ADMIN, USER), dockerização, proxy reverso e balanceador de carga nginx server, rate limiter para evitar ataques DDoS, graphql, serviço de email, filas e jobs assincronos, filtros de busca com paginação,
-geração de pdf de comporvante, transacions (de banco de dados) para fazer transações bancárias, inversão de dependências, tipagem de resposta de apis mais robustas,
+geração de pdf de comporvante, transactions (de banco de dados) para fazer transações bancárias, inversão de dependências, tipagem de resposta de apis mais robustas,
 tradução de exceptions para internacionalização e soft delete para contas.
