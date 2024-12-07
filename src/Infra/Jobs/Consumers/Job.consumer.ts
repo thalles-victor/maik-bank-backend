@@ -22,6 +22,7 @@ export class SendmailConsumer extends WorkerHost {
 
     if (job.name === JOB.TRANSACTION_EMAIL_JOB) {
       await this.transactionSendMailJob(data);
+      return;
     }
 
     throw new Error('Job not found');
